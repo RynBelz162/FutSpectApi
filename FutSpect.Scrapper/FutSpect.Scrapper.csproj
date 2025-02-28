@@ -11,4 +11,8 @@
     <PackageReference Include="Microsoft.Playwright" Version="1.50.0" />
   </ItemGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\FutSpect.Shared\FutSpect.Shared.csproj" />
+  </ItemGroup>
+
 </Project>
