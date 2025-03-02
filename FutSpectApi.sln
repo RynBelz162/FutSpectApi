@@ -9,6 +9,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "FutSpect.Api", "FutSpect.Ap
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FutSpect.Shared", "FutSpect.Shared\FutSpect.Shared.csproj", "{A6CFDEE7-2F27-4DD3-906B-065AC89023AE}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FutSpect.DAL", "FutSpect.DAL\FutSpect.DAL.csproj", "{9B0933FA-AEE9-4D39-A339-569338F3B2FA}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -55,6 +57,18 @@ Global
 		{A6CFDEE7-2F27-4DD3-906B-065AC89023AE}.Release|x64.Build.0 = Release|Any CPU
 		{A6CFDEE7-2F27-4DD3-906B-065AC89023AE}.Release|x86.ActiveCfg = Release|Any CPU
 		{A6CFDEE7-2F27-4DD3-906B-065AC89023AE}.Release|x86.Build.0 = Release|Any CPU
+		{9B0933FA-AEE9-4D39-A339-569338F3B2FA}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{9B0933FA-AEE9-4D39-A339-569338F3B2FA}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{9B0933FA-AEE9-4D39-A339-569338F3B2FA}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{9B0933FA-AEE9-4D39-A339-569338F3B2FA}.Debug|x64.Build.0 = Debug|Any CPU
+		{9B0933FA-AEE9-4D39-A339-569338F3B2FA}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{9B0933FA-AEE9-4D39-A339-569338F3B2FA}.Debug|x86.Build.0 = Debug|Any CPU
+		{9B0933FA-AEE9-4D39-A339-569338F3B2FA}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{9B0933FA-AEE9-4D39-A339-569338F3B2FA}.Release|Any CPU.Build.0 = Release|Any CPU
+		{9B0933FA-AEE9-4D39-A339-569338F3B2FA}.Release|x64.ActiveCfg = Release|Any CPU
+		{9B0933FA-AEE9-4D39-A339-569338F3B2FA}.Release|x64.Build.0 = Release|Any CPU
+		{9B0933FA-AEE9-4D39-A339-569338F3B2FA}.Release|x86.ActiveCfg = Release|Any CPU
+		{9B0933FA-AEE9-4D39-A339-569338F3B2FA}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
