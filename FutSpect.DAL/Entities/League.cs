@@ -4,8 +4,8 @@ using Microsoft.EntityFrameworkCore;
 
 namespace FutSpect.DAL.Entities;
 
-[Index(nameof(Name), IsUnique = true)]
-public class Club
+[Index(nameof(Name), nameof(CountryId), IsUnique = true)]
+public class League
 {
     [Key]
     [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
@@ -14,13 +14,11 @@ public class Club
     [Required]
     [Unicode(false)]
     [MaxLength(100)]
-    public required string Name { get; init; }
+    public required string Name { get; set;}
 
+    [Required]
     public required int CountryId { get; init; }
 
     [ForeignKey(nameof(CountryId))]
     public Country? Country { get; init; }
-
-    [ForeignKey(nameof(ClubLogo.ClubId))]
-    public ClubLogo? Logo { get; init; }
 }
