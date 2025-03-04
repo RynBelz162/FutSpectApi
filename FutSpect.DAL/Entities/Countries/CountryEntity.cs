@@ -2,10 +2,10 @@ using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using Microsoft.EntityFrameworkCore;
 
-namespace FutSpect.DAL.Entities;
+namespace FutSpect.DAL.Entities.Countries;
 
 [Index(nameof(Name), IsUnique = true)]
-public class Country
+public class CountryEntity
 {
     [Key]
     [DatabaseGenerated(DatabaseGeneratedOption.None)]

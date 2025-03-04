@@ -1,11 +1,12 @@
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using FutSpect.DAL.Entities.Countries;
 using Microsoft.EntityFrameworkCore;
 
-namespace FutSpect.DAL.Entities;
+namespace FutSpect.DAL.Entities.Leagues;
 
-[Index(nameof(Name), IsUnique = true)]
-public class Club
+[Index(nameof(Name), nameof(CountryId), IsUnique = true)]
+public class LeagueEntity
 {
     [Key]
     [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
@@ -14,13 +15,11 @@ public class Club
     [Required]
     [Unicode(false)]
     [MaxLength(100)]
-    public required string Name { get; init; }
+    public required string Name { get; set;}
 
+    [Required]
     public required int CountryId { get; init; }
 
     [ForeignKey(nameof(CountryId))]
-    public Country? Country { get; init; }
-
-    [ForeignKey(nameof(ClubLogo.ClubId))]
-    public ClubLogo? Logo { get; init; }
+    public CountryEntity Country { get; init; } = null!;
 }

@@ -15,7 +15,7 @@ public class ScrapperService(IEnumerable<ILeagueScrapper> leagueScrapers) : IHos
 
         await Task.WhenAll(scrapTasks);
 
-        Console.ReadLine();
+        await browser.CloseAsync();
     }
 
     public Task StopAsync(CancellationToken cancellationToken)

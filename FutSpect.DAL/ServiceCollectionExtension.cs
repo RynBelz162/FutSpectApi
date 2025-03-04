@@ -1,0 +1,20 @@
+using FutSpect.DAL.Repositories.Leagues;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.DependencyInjection;
+
+namespace FutSpect.DAL;
+
+public static class ServiceCollectionExtension
+{
+    public static IServiceCollection AddDatabase(this IServiceCollection serviceCollection, string connectionString)
+    {
+        serviceCollection.AddDbContext<FutSpectContext>(opt =>
+        {
+            opt.UseNpgsql(connectionString);
+        });
+
+        serviceCollection.AddSingleton<ILeagueRepository, LeagueRepository>();
+
+        return serviceCollection;
+    }
+}

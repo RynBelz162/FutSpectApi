@@ -1,9 +1,9 @@
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
-namespace FutSpect.DAL.Entities;
+namespace FutSpect.DAL.Entities.Clubs;
 
-public class ClubLogo
+public class ClubLogoEntity
 {
     [Key]
     [DatabaseGenerated(DatabaseGeneratedOption.Identity)]

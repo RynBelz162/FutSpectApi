@@ -1,19 +1,41 @@
+using FutSpect.DAL.Repositories.Leagues;
 using FutSpect.Scrapper.Interfaces;
+using FutSpect.Shared.Constants;
 using FutSpect.Shared.Extensions;
 using FutSpect.Shared.Models;
+using FutSpect.Shared.Models.Leagues;
 using Microsoft.Playwright;
 
 namespace FutSpect.Scrapper.Services.Leagues;
 
-public class MlsLeagueScrapper : ILeagueScrapper
+public class MlsLeagueScrapper(ILeagueRepository leagueRepository) : ILeagueScrapper
 {
     public async Task Scrap(IBrowser browser)
-    {
+    {   
+        var leagueId = await GetLeagueId();
+
         var page = await browser.NewPageAsync();
 
         await page.GotoAsync("https://mlssoccer.com/clubs");
 
         var clubs = await ScrapClubs(page);
+    }
+
+    private async Task<int> GetLeagueId()
+    {
+        var mlsLeague = await leagueRepository.Get("Major League Soccer");
+        if (mlsLeague is not null)
+        {
+            return mlsLeague.Id;
+        }
+
+        var league = new League
+        {
+            Name = "Major League Soccer",
+            CountryId = Countries.USA,
+        };
+
+        return await leagueRepository.Save(league);
     }
 
     private static async Task<ClubInfo[]> ScrapClubs(IPage page)
