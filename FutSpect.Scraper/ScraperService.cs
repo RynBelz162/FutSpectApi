@@ -1,19 +1,19 @@
-using FutSpect.Scrapper.Interfaces;
+using FutSpect.Scraper.Interfaces;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Playwright;
 
-namespace FutSpect.Scrapper;
+namespace FutSpect.Scraper;
 
-public class ScrapperService(IEnumerable<ILeagueScrapper> leagueScrapers) : IHostedService
+public class ScraperService(IEnumerable<ILeagueScraper> leagueScrapers) : IHostedService
 {
     public async Task StartAsync(CancellationToken cancellationToken)
     {
         using var playwright = await Playwright.CreateAsync();
         await using var browser = await playwright.Chromium.LaunchAsync(new() { Headless = false });
 
-        var scrapTasks = leagueScrapers.Select(scrapper => scrapper.Scrap(browser));
+        var scrapeTasks = leagueScrapers.Select(scraper => scraper.Scrape(browser));
 
-        await Task.WhenAll(scrapTasks);
+        await Task.WhenAll(scrapeTasks);
 
         await browser.CloseAsync();
     }

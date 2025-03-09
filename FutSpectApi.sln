@@ -3,7 +3,7 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.5.2.0
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "FutSpect.Scrapper", "FutSpect.Scrapper\FutSpect.Scrapper.csproj", "{9D080A3A-D089-40F1-A40E-54F747ACEF8D}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "FutSpect.Scraper", "FutSpect.Scraper\FutSpect.Scraper.csproj", "{9D080A3A-D089-40F1-A40E-54F747ACEF8D}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "FutSpect.Api", "FutSpect.Api\FutSpect.Api.csproj", "{E99AB895-D272-4B25-9A6D-C3D82C8777F1}"
 EndProject

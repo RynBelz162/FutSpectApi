@@ -1,4 +1,4 @@
-namespace FutSpect.Scrapper.Services;
+namespace FutSpect.Scraper.Services;
 
 public static class ImageDownloaderService
 {

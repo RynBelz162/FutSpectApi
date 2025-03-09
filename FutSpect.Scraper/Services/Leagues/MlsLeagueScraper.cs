@@ -1,16 +1,16 @@
 using FutSpect.DAL.Repositories.Leagues;
-using FutSpect.Scrapper.Interfaces;
+using FutSpect.Scraper.Interfaces;
 using FutSpect.Shared.Constants;
 using FutSpect.Shared.Extensions;
 using FutSpect.Shared.Models;
 using FutSpect.Shared.Models.Leagues;
 using Microsoft.Playwright;
 
-namespace FutSpect.Scrapper.Services.Leagues;
+namespace FutSpect.Scraper.Services.Leagues;
 
-public class MlsLeagueScrapper(ILeagueRepository leagueRepository) : ILeagueScrapper
+public class MlsLeagueScraper(ILeagueRepository leagueRepository) : ILeagueScraper
 {
-    public async Task Scrap(IBrowser browser)
+    public async Task Scrape(IBrowser browser)
     {   
         var leagueId = await GetLeagueId();
 
@@ -18,7 +18,7 @@ public class MlsLeagueScrapper(ILeagueRepository leagueRepository) : ILeagueScra
 
         await page.GotoAsync("https://mlssoccer.com/clubs");
 
-        var clubs = await ScrapClubs(page);
+        var clubs = await ScrapeClubs(page);
     }
 
     private async Task<int> GetLeagueId()
@@ -38,7 +38,7 @@ public class MlsLeagueScrapper(ILeagueRepository leagueRepository) : ILeagueScra
         return await leagueRepository.Save(league);
     }
 
-    private static async Task<ClubInfo[]> ScrapClubs(IPage page)
+    private static async Task<ClubInfo[]> ScrapeClubs(IPage page)
     {
         await page.GotoAsync("https://mlssoccer.com/clubs");
         var clubLogos = await page.Locator(".mls-o-clubs-hub-clubs-list__club-logo").AllAsync();
