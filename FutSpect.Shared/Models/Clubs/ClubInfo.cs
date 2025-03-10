@@ -1,4 +1,4 @@
-namespace FutSpect.Shared.Models;
+namespace FutSpect.Shared.Models.Clubs;
 
 public record ClubInfo
 (

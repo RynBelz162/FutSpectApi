@@ -14,7 +14,7 @@ public record Result
             Message = message
         };
 
-    public static Result Success() =>
+    public static Result Ok() =>
         new()
         {
             IsSuccess = true
@@ -37,7 +37,7 @@ public record Result<T>
             Value = default
         };
 
-    public static Result<T> Success(T value) =>
+    public static Result<T> Ok(T value) =>
         new()
         {
             IsSuccess = true,
