@@ -1,13 +1,12 @@
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
-using FutSpect.DAL.Interfaces;
 using Microsoft.EntityFrameworkCore;
 using SharedConstants = FutSpect.Shared.Constants;
 
 namespace FutSpect.DAL.Entities.Countries;
 
 [Index(nameof(Name), IsUnique = true)]
-public class CountryEntity : ILookupTable
+public class CountryEntity
 {
     [Key]
     [DatabaseGenerated(DatabaseGeneratedOption.None)]
@@ -21,7 +20,7 @@ public class CountryEntity : ILookupTable
     [MaxLength(2)]
     public required string Abbreviation { get; init; }
 
-    public void SeedData(DbContext dbContext)
+    public static void SeedData(DbContext dbContext)
     {
         var usa = dbContext
             .Set<CountryEntity>()
@@ -45,7 +44,7 @@ public class CountryEntity : ILookupTable
         }
     }
 
-    public async Task SeedDataAsync(DbContext dbContext, CancellationToken cancellationToken)
+    public static async Task SeedDataAsync(DbContext dbContext, CancellationToken cancellationToken)
     {
         var usa = await dbContext
             .Set<CountryEntity>()

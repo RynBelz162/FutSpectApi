@@ -2,7 +2,6 @@
 using FutSpect.DAL.Entities.Countries;
 using FutSpect.DAL.Entities.Leagues;
 using FutSpect.DAL.Entities.Scraping;
-using FutSpect.DAL.Interfaces;
 using Microsoft.EntityFrameworkCore;
 
 namespace FutSpect.DAL;
@@ -38,36 +37,16 @@ public class FutSpectContext : DbContext
 
         options.UseNpgsql("Server=127.0.0.1;Port=5432;Database=FutSpect;User Id=postgres;Password=postgres;");
 
-        var lookupEntities = AppDomain.CurrentDomain.GetAssemblies()
-            .SelectMany(assembly => assembly.GetTypes())
-            .Where(type => typeof(ILookupTable).IsAssignableFrom(type) && type.IsClass);
-
         options.UseSeeding((ctx, _) =>
         {
-            foreach (var type in lookupEntities)
-            {
-                var entity = ctx.Model.FindEntityType(type);
-                if (entity is null)
-                {
-                    continue;
-                }
-
-                ((ILookupTable)entity.ClrType).SeedData(ctx);
-            }
+            CountryEntity.SeedData(ctx);
+            ScrapeTypeEntity.SeedData(ctx);
         });
 
         options.UseAsyncSeeding(async (ctx, _, cancellationToken) =>
         {
-            foreach (var type in lookupEntities)
-            {
-                var entity = ctx.Model.FindEntityType(type);
-                if (entity is null)
-                {
-                    continue;
-                }
-
-                await ((ILookupTable)entity.ClrType).SeedDataAsync(ctx, cancellationToken);
-            }
+            await CountryEntity.SeedDataAsync(ctx, cancellationToken);
+            await ScrapeTypeEntity.SeedDataAsync(ctx, cancellationToken);
         });
     }
 }

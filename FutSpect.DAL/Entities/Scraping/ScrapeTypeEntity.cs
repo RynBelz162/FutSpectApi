@@ -1,13 +1,12 @@
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using FutSpect.DAL.Constants;
-using FutSpect.DAL.Interfaces;
 using Microsoft.EntityFrameworkCore;
 
 namespace FutSpect.DAL.Entities.Scraping;
 
 [Index(nameof(Name), IsUnique = true)]
-public class ScrapeTypeEntity : ILookupTable
+public class ScrapeTypeEntity
 {
     [Key]
     [DatabaseGenerated(DatabaseGeneratedOption.None)]
@@ -17,7 +16,7 @@ public class ScrapeTypeEntity : ILookupTable
     [MaxLength(75)]
     public required string Name { get; init; }
 
-    public void SeedData(DbContext dbContext)
+    public static void SeedData(DbContext dbContext)
     {
         var leagueInfoType = dbContext.Set<ScrapeTypeEntity>().FirstOrDefault(x => x.Id == ScrapeTypes.LeagueInfo);
         if (leagueInfoType is null)
@@ -37,7 +36,7 @@ public class ScrapeTypeEntity : ILookupTable
         }
     }
 
-    public async Task SeedDataAsync(DbContext dbContext, CancellationToken cancellationToken)
+    public static async Task SeedDataAsync(DbContext dbContext, CancellationToken cancellationToken)
     {
         var leagueInfoType = await dbContext
             .Set<ScrapeTypeEntity>()
