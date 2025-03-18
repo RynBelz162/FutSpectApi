@@ -1,6 +1,6 @@
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
-using FutSpect.DAL.Entities.Countries;
+using FutSpect.DAL.Entities.Lookups;
 using Microsoft.EntityFrameworkCore;
 
 namespace FutSpect.DAL.Entities.Clubs;

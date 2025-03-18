@@ -1,7 +1,7 @@
 ﻿using System.Security.Cryptography.X509Certificates;
 using FutSpect.DAL.Entities.Clubs;
-using FutSpect.DAL.Entities.Countries;
 using FutSpect.DAL.Entities.Leagues;
+using FutSpect.DAL.Entities.Lookups;
 using FutSpect.DAL.Entities.Scraping;
 using Microsoft.EntityFrameworkCore;
 
@@ -29,6 +29,8 @@ public class FutSpectContext : DbContext
 
     public DbSet<ScrapeTypeEntity> ScrapeTypes { get; set; }
 
+    public DbSet<PositionEntity> Positions { get; set; }
+
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         base.OnModelCreating(modelBuilder);
@@ -50,12 +52,14 @@ public class FutSpectContext : DbContext
         {
             CountryEntity.SeedData(ctx);
             ScrapeTypeEntity.SeedData(ctx);
+            PositionEntity.SeedData(ctx);
         });
 
         options.UseAsyncSeeding(async (ctx, _, cancellationToken) =>
         {
             await CountryEntity.SeedDataAsync(ctx, cancellationToken);
             await ScrapeTypeEntity.SeedDataAsync(ctx, cancellationToken);
+            await PositionEntity.SeedDataAsync(ctx, cancellationToken);
         });
     }
 }

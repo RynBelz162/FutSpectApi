@@ -3,7 +3,7 @@ using System.ComponentModel.DataAnnotations.Schema;
 using Microsoft.EntityFrameworkCore;
 using SharedConstants = FutSpect.Shared.Constants;
 
-namespace FutSpect.DAL.Entities.Countries;
+namespace FutSpect.DAL.Entities.Lookups;
 
 [Index(nameof(Name), IsUnique = true)]
 public class CountryEntity

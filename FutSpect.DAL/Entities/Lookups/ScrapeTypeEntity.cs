@@ -3,7 +3,7 @@ using System.ComponentModel.DataAnnotations.Schema;
 using FutSpect.DAL.Constants;
 using Microsoft.EntityFrameworkCore;
 
-namespace FutSpect.DAL.Entities.Scraping;
+namespace FutSpect.DAL.Entities.Lookups;
 
 [Index(nameof(Name), IsUnique = true)]
 public class ScrapeTypeEntity
