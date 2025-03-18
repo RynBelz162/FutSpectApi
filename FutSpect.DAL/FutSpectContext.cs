@@ -1,4 +1,5 @@
-﻿using FutSpect.DAL.Entities.Clubs;
+﻿using System.Security.Cryptography.X509Certificates;
+using FutSpect.DAL.Entities.Clubs;
 using FutSpect.DAL.Entities.Countries;
 using FutSpect.DAL.Entities.Leagues;
 using FutSpect.DAL.Entities.Scraping;
@@ -27,6 +28,14 @@ public class FutSpectContext : DbContext
     public DbSet<ScrapeLedgerEntity> ScrapeLedgers { get; set; }
 
     public DbSet<ScrapeTypeEntity> ScrapeTypes { get; set; }
+
+    protected override void OnModelCreating(ModelBuilder modelBuilder)
+    {
+        base.OnModelCreating(modelBuilder);
+
+        modelBuilder.Entity<ClubLogoEntity>().Property(x => x.Id)
+            .HasDefaultValue("UUID_GENERATE_V4()");
+    }
 
     protected override void OnConfiguring(DbContextOptionsBuilder options)
     {
