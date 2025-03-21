@@ -1,7 +1,7 @@
-﻿using System.Security.Cryptography.X509Certificates;
-using FutSpect.DAL.Entities.Clubs;
+﻿using FutSpect.DAL.Entities.Clubs;
 using FutSpect.DAL.Entities.Leagues;
 using FutSpect.DAL.Entities.Lookups;
+using FutSpect.DAL.Entities.Players;
 using FutSpect.DAL.Entities.Scraping;
 using Microsoft.EntityFrameworkCore;
 
@@ -31,12 +31,15 @@ public class FutSpectContext : DbContext
 
     public DbSet<PositionEntity> Positions { get; set; }
 
+    public DbSet<PlayerEntity> Players { get; set; }
+
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         base.OnModelCreating(modelBuilder);
 
-        modelBuilder.Entity<ClubLogoEntity>().Property(x => x.Id)
-            .HasDefaultValue("UUID_GENERATE_V4()");
+        modelBuilder.Entity<ClubLogoEntity>()
+            .Property(x => x.Id)
+            .HasDefaultValueSql("uuid_generate_v7()");
     }
 
     protected override void OnConfiguring(DbContextOptionsBuilder options)

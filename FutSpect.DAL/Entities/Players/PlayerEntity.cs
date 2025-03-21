@@ -23,6 +23,11 @@ public class PlayerEntity
     [Required]
     public required int PositionId { get; init; }
 
+    [Required]
+    [MinLength(0)]
+    [MaxLength(100)]
+    public required short Number { get; init; }
+
     [ForeignKey(nameof(PositionId))]
     public PositionEntity? Position { get; init; }
 }

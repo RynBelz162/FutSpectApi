@@ -6,7 +6,6 @@ namespace FutSpect.DAL.Entities.Clubs;
 public class ClubLogoEntity
 {
     [Key]
-    [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
     public Guid Id { get; init; }
 
     [Required]
@@ -16,4 +15,7 @@ public class ClubLogoEntity
     public required byte[] Bytes { get; init;}
 
     public string? SrcUrl { get; init; }
+
+    [ForeignKey(nameof(ClubId))]
+    public ClubEntity? Club { get; init; }
 }

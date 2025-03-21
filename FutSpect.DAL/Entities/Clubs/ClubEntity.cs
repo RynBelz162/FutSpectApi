@@ -22,6 +22,5 @@ public class ClubEntity
     [ForeignKey(nameof(CountryId))]
     public CountryEntity? Country { get; init; }
 
-    [ForeignKey(nameof(ClubLogoEntity.ClubId))]
     public ClubLogoEntity? Logo { get; init; }
 }
