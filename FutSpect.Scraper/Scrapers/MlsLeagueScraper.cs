@@ -3,11 +3,10 @@ using FutSpect.Scraper.Constants;
 using FutSpect.Scraper.Extensions;
 using FutSpect.Scraper.Interfaces;
 using FutSpect.Scraper.Models;
+using FutSpect.Scraper.Services;
 using FutSpect.Scraper.Services.Leagues.Mls;
 using FutSpect.Scraper.Services.Scraping;
-using FutSpect.Shared.Constants;
 using FutSpect.Shared.Extensions;
-using FutSpect.Shared.Models.Players;
 using Microsoft.Playwright;
 
 namespace FutSpect.Scraper.Scrapers;
@@ -48,13 +47,15 @@ public partial class MlsLeagueScraper
         var clubLogo = locator.Locator(".mls-o-clubs-hub-clubs-list__club-logo");
 
         var imageElement = clubLogo.Locator("picture").Locator("img");
-        var image = await imageElement.GetAttributeAsync("src");
+        var imageSrc = await imageElement.GetAttributeAsync("src");
         var name = await imageElement.GetAttributeAsync("alt");
 
-        if (string.IsNullOrWhiteSpace(image) || string.IsNullOrWhiteSpace(name))
+        if (string.IsNullOrWhiteSpace(imageSrc) || string.IsNullOrWhiteSpace(name))
         {
             return null;
         }
+
+        var (imageBytes, imageExtension) = await ImageDownloaderService.DownloadImageAsync(imageSrc);
 
         var links = locator.Locator(".mls-o-clubs-hub-clubs-list__club-info")
             .Locator(".mls-o-clubs-hub-clubs-list__club-links");
@@ -65,13 +66,18 @@ public partial class MlsLeagueScraper
         return new ClubScrapeInfo
         {
             Name = name,
-            ImageSrcUrl = image,
+            Image = new()
+            {
+                ImageSrcUrl = imageSrc,
+                ImageBytes = imageBytes,
+                ImageExtension = imageExtension,
+            },
             RosterUrl = $"{LeagueSiteUrl}{detailsHref}roster",
             ScheduleUrl = $"{LeagueSiteUrl}{scheduleHref}"
         };
     }
 
-    private async Task<List<PlayerInfo>> ScrapePlayers(IBrowser browser, ClubScrapeInfo clubScrapeInfo)
+    private async Task<List<PlayerScrapeInfo>> ScrapePlayers(IBrowser browser, ClubScrapeInfo clubScrapeInfo)
     {
         var page = await browser.NewPageAsync();
 
@@ -84,12 +90,12 @@ public partial class MlsLeagueScraper
             .GetByRole(AriaRole.Row)
             .AllAsync();
 
-        var players = new List<PlayerInfo>();
+        var players = new List<PlayerScrapeInfo>();
 
         foreach (var row in rows)
         {
             var cells = await row.GetByRole(AriaRole.Cell).AllAsync();
-            var firstCell = cells.FirstOrDefault();
+            var firstCell = cells[0];
 
             if (firstCell is null)
             {
@@ -110,9 +116,22 @@ public partial class MlsLeagueScraper
                 }
             }
 
+            var imageElement = page.Locator(".mls-o-masthead__branded-image > picture > img");
+            var imageSrc = await imageElement.GetAttributeAsync("src");
+
+
+            string imageExtension = string.Empty;
+            byte[] imageBytes = [];
+
+            if (imageSrc is not null)
+            {
+                (imageBytes, imageExtension) = await ImageDownloaderService.DownloadImageAsync(imageSrc);
+            }
+
             string? firstName = null;
             string lastName = string.Empty;
             int positionId = 0;
+            string? birthPlace = string.Empty;
 
             var infoElements = await page.Locator(".mls-l-module--player-status-details__info").AllAsync();
             foreach (var infoElement in infoElements)
@@ -131,9 +150,27 @@ public partial class MlsLeagueScraper
                     var value = await infoElement.Locator("span").TextContentAsync() ?? string.Empty;
                     positionId = playerService.GetPositionId(value);
                 }
+
+                if (string.Equals(property, MlsPlayerElementConstants.Birthplace))
+                {
+                    birthPlace = await infoElement.Locator("span").TextContentAsync() ?? string.Empty;
+                }
             }
 
-            players.Add(new PlayerInfo(firstName, lastName, positionId, number));
+            players.Add(new PlayerScrapeInfo
+            {
+                FirstName = firstName, 
+                LastName = lastName,
+                PositionId = positionId,
+                Number = number,
+                Birthplace = birthPlace,
+                Image = new()
+                {
+                    ImageBytes = imageBytes,
+                    ImageExtension = imageExtension,
+                    ImageSrcUrl = imageSrc ?? string.Empty
+                }
+            });
         }
 
         await page.CloseAsync();

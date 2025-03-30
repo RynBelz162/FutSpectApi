@@ -9,7 +9,7 @@ public class ScraperService(IEnumerable<ILeagueScraper> leagueScrapers) : IHoste
     public async Task StartAsync(CancellationToken cancellationToken)
     {
         using var playwright = await Playwright.CreateAsync();
-        await using var browser = await playwright.Chromium.LaunchAsync(new() { Headless = false });
+        await using var browser = await playwright.Chromium.LaunchAsync(new() { Headless = false  });
 
         var scrapeTasks = leagueScrapers.Select(scraper => scraper.Scrape(browser));
 
