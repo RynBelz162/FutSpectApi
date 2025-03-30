@@ -18,6 +18,10 @@ public partial class MlsLeagueScraper
 ) : ILeagueScraper
 {
     const string LeagueSiteUrl = "https://mlssoccer.com";
+    const string PlayerSiteUrl = "https://www.mlssoccer.com/players/*/";
+
+    [GeneratedRegex("#[\\d]")]
+    private static partial Regex NumberRegex();
 
     public async Task Scrape(IBrowser browser)
     {   
@@ -77,7 +81,7 @@ public partial class MlsLeagueScraper
         };
     }
 
-    private async Task<List<PlayerScrapeInfo>> ScrapePlayers(IBrowser browser, ClubScrapeInfo clubScrapeInfo)
+    private async Task<PlayerScrapeInfo[]> ScrapePlayers(IBrowser browser, ClubScrapeInfo clubScrapeInfo)
     {
         var page = await browser.NewPageAsync();
 
@@ -90,93 +94,94 @@ public partial class MlsLeagueScraper
             .GetByRole(AriaRole.Row)
             .AllAsync();
 
-        var players = new List<PlayerScrapeInfo>();
+        var playerScrapeTasks = rows
+            .Select(x => ScrapePlayer(x, page))
+            .ToArray();
 
-        foreach (var row in rows)
+        var players = await Task.WhenAll(playerScrapeTasks);
+
+        await page.CloseAsync();
+        return [..players.WhereNotNull()];
+    }
+
+    private async Task<PlayerScrapeInfo?> ScrapePlayer(ILocator playerLocator, IPage page)
+    {
+        var cells = await playerLocator.GetByRole(AriaRole.Cell).AllAsync();
+        var firstCell = cells[0];
+
+        if (firstCell is null)
         {
-            var cells = await row.GetByRole(AriaRole.Cell).AllAsync();
-            var firstCell = cells[0];
+            return null;
+        }
 
-            if (firstCell is null)
+        await firstCell.Locator(".mls-o-table__href").ClickAsync();
+        await page.WaitForURLAsync(PlayerSiteUrl);
+
+        short number = 0;
+        var header = await page.Locator(".mls-o-masthead__text").TextContentAsync();
+        if (header is not null)
+        {
+            var match = NumberRegex().Match(header);
+            if (match.Success && short.TryParse(match.Value, out var numberRaw))
             {
+                number = numberRaw;
+            }
+        }
+
+        var imageElement = page.Locator(".mls-o-masthead__branded-image > picture > img");
+        var imageSrc = await imageElement.GetAttributeAsync("src");
+
+
+        string imageExtension = string.Empty;
+        byte[] imageBytes = [];
+
+        if (imageSrc is not null)
+        {
+            (imageBytes, imageExtension) = await ImageDownloaderService.DownloadImageAsync(imageSrc);
+        }
+
+        string? firstName = null;
+        string? birthPlace = null;
+        string lastName = string.Empty;
+        int positionId = 0;
+
+        var infoElements = await page.Locator(".mls-l-module--player-status-details__info").AllAsync();
+        foreach (var infoElement in infoElements)
+        {
+            var property = await infoElement.Locator("h3").TextContentAsync();
+
+            if (string.Equals(property, MlsPlayerElementConstants.Name, StringComparison.OrdinalIgnoreCase))
+            {
+                var value = await infoElement.Locator("span").TextContentAsync() ?? string.Empty;
+                (firstName, lastName) = playerService.GetName(value);
                 continue;
             }
 
-            await firstCell.Locator(".mls-o-table__href").ClickAsync();
-            await page.WaitForURLAsync("https://www.mlssoccer.com/players/*/");
-
-            short number = 0;
-            var header = await page.Locator(".mls-o-masthead__text").TextContentAsync();
-            if (header is not null)
+            if (string.Equals(property, MlsPlayerElementConstants.Position, StringComparison.OrdinalIgnoreCase))
             {
-                var match = NumberRegex().Match(header);
-                if (match.Success && short.TryParse(match.Value, out var numberRaw))
-                {
-                    number = numberRaw;
-                }
+                var value = await infoElement.Locator("span").TextContentAsync() ?? string.Empty;
+                positionId = playerService.GetPositionId(value);
             }
 
-            var imageElement = page.Locator(".mls-o-masthead__branded-image > picture > img");
-            var imageSrc = await imageElement.GetAttributeAsync("src");
-
-
-            string imageExtension = string.Empty;
-            byte[] imageBytes = [];
-
-            if (imageSrc is not null)
+            if (string.Equals(property, MlsPlayerElementConstants.Birthplace, StringComparison.OrdinalIgnoreCase))
             {
-                (imageBytes, imageExtension) = await ImageDownloaderService.DownloadImageAsync(imageSrc);
+                birthPlace = await infoElement.Locator("span").TextContentAsync() ?? string.Empty;
             }
-
-            string? firstName = null;
-            string lastName = string.Empty;
-            int positionId = 0;
-            string? birthPlace = string.Empty;
-
-            var infoElements = await page.Locator(".mls-l-module--player-status-details__info").AllAsync();
-            foreach (var infoElement in infoElements)
-            {
-                var property = await infoElement.Locator("h3").TextContentAsync();
-
-                if (string.Equals(property, MlsPlayerElementConstants.Name))
-                {
-                    var value = await infoElement.Locator("span").TextContentAsync() ?? string.Empty;
-                    (firstName, lastName) = playerService.GetName(value);
-                    continue;
-                }
-
-                if (string.Equals(property, MlsPlayerElementConstants.Position))
-                {
-                    var value = await infoElement.Locator("span").TextContentAsync() ?? string.Empty;
-                    positionId = playerService.GetPositionId(value);
-                }
-
-                if (string.Equals(property, MlsPlayerElementConstants.Birthplace))
-                {
-                    birthPlace = await infoElement.Locator("span").TextContentAsync() ?? string.Empty;
-                }
-            }
-
-            players.Add(new PlayerScrapeInfo
-            {
-                FirstName = firstName, 
-                LastName = lastName,
-                PositionId = positionId,
-                Number = number,
-                Birthplace = birthPlace,
-                Image = new()
-                {
-                    ImageBytes = imageBytes,
-                    ImageExtension = imageExtension,
-                    ImageSrcUrl = imageSrc ?? string.Empty
-                }
-            });
         }
 
-        await page.CloseAsync();
-        return players;
+        return new PlayerScrapeInfo
+        {
+            FirstName = firstName, 
+            LastName = lastName,
+            PositionId = positionId,
+            Number = number,
+            Birthplace = birthPlace,
+            Image = new()
+            {
+                ImageBytes = imageBytes,
+                ImageExtension = imageExtension,
+                ImageSrcUrl = imageSrc ?? string.Empty
+            }
+        };
     }
-
-    [GeneratedRegex("#[\\d]")]
-    private static partial Regex NumberRegex();
 }
