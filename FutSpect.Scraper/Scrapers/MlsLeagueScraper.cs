@@ -81,7 +81,7 @@ public partial class MlsLeagueScraper
         };
     }
 
-    private async Task<PlayerScrapeInfo[]> ScrapePlayers(IBrowser browser, ClubScrapeInfo clubScrapeInfo)
+    private async Task<List<PlayerScrapeInfo>> ScrapePlayers(IBrowser browser, ClubScrapeInfo clubScrapeInfo)
     {
         var page = await browser.NewPageAsync();
 
@@ -94,14 +94,20 @@ public partial class MlsLeagueScraper
             .GetByRole(AriaRole.Row)
             .AllAsync();
 
-        var playerScrapeTasks = rows
-            .Select(x => ScrapePlayer(x, page))
-            .ToArray();
+        var players = new List<PlayerScrapeInfo>();
+        foreach (var row in rows)
+        {
+            var player = await ScrapePlayer(row, page);
+            if (player is null)
+            {
+                continue;
+            }
 
-        var players = await Task.WhenAll(playerScrapeTasks);
+            players.Add(player);
+        }
 
         await page.CloseAsync();
-        return [..players.WhereNotNull()];
+        return players;
     }
 
     private async Task<PlayerScrapeInfo?> ScrapePlayer(ILocator playerLocator, IPage page)
