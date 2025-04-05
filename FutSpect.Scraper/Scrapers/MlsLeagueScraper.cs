@@ -14,14 +14,11 @@ namespace FutSpect.Scraper.Scrapers;
 public partial class MlsLeagueScraper
 (
     IMlsLeagueService mlsLeagueService,
-    IPlayerService playerService
+    IPlayerInfoParseService playerInfoParseService
 ) : ILeagueScraper
 {
     const string LeagueSiteUrl = "https://mlssoccer.com";
     const string PlayerSiteUrl = "https://www.mlssoccer.com/players/*/";
-
-    [GeneratedRegex("#[\\d]")]
-    private static partial Regex NumberRegex();
 
     public async Task Scrape(IBrowser browser)
     {   
@@ -33,6 +30,8 @@ public partial class MlsLeagueScraper
         {
             await ScrapePlayers(browser, club);
         }
+
+        Console.WriteLine("Test");
     }
 
     private static async Task<ClubScrapeInfo[]> ScrapeClubs(IPage page)
@@ -123,20 +122,11 @@ public partial class MlsLeagueScraper
         await firstCell.Locator(".mls-o-table__href").ClickAsync();
         await page.WaitForURLAsync(PlayerSiteUrl);
 
-        short number = 0;
         var header = await page.Locator(".mls-o-masthead__text").TextContentAsync();
-        if (header is not null)
-        {
-            var match = NumberRegex().Match(header);
-            if (match.Success && short.TryParse(match.Value, out var numberRaw))
-            {
-                number = numberRaw;
-            }
-        }
+        var number = playerInfoParseService.GetNumber(header);
 
         var imageElement = page.Locator(".mls-o-masthead__branded-image > picture > img");
         var imageSrc = await imageElement.GetAttributeAsync("src");
-
 
         string imageExtension = string.Empty;
         byte[] imageBytes = [];
@@ -155,23 +145,22 @@ public partial class MlsLeagueScraper
         foreach (var infoElement in infoElements)
         {
             var property = await infoElement.Locator("h3").TextContentAsync();
+            var value = await infoElement.Locator("span").TextContentAsync();
 
             if (string.Equals(property, MlsPlayerElementConstants.Name, StringComparison.OrdinalIgnoreCase))
             {
-                var value = await infoElement.Locator("span").TextContentAsync() ?? string.Empty;
-                (firstName, lastName) = playerService.GetName(value);
+                (firstName, lastName) = playerInfoParseService.GetName(value);
                 continue;
             }
 
             if (string.Equals(property, MlsPlayerElementConstants.Position, StringComparison.OrdinalIgnoreCase))
             {
-                var value = await infoElement.Locator("span").TextContentAsync() ?? string.Empty;
-                positionId = playerService.GetPositionId(value);
+                positionId = playerInfoParseService.GetPositionId(value);
             }
 
             if (string.Equals(property, MlsPlayerElementConstants.Birthplace, StringComparison.OrdinalIgnoreCase))
             {
-                birthPlace = await infoElement.Locator("span").TextContentAsync() ?? string.Empty;
+                birthPlace = value?.Replace("\\n", string.Empty);
             }
         }
 
