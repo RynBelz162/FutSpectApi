@@ -15,6 +15,7 @@ const string ConnectionString = "Server=127.0.0.1;Port=5432;Database=FutSpect;Us
 builder.Services.AddDatabase(ConnectionString);
 
 builder.Services.AddSingleton<IPlayerInfoParseService, PlayerInfoParseService>();
+builder.Services.AddSingleton<ISanitizeService, SanitizeService>();
 
 builder.Services.AddSingleton<IMlsLeagueService, MlsLeagueService>();
 builder.Services.AddSingleton<ILeagueScraper, MlsLeagueScraper>();

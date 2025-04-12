@@ -58,14 +58,4 @@ public partial class PlayerInfoParseService : IPlayerInfoParseService
 
         return 0;
     }
-
-    public string GetCleanTextValue(string? value)
-    {
-        if (string.IsNullOrWhiteSpace(value))
-        {
-            return string.Empty;
-        }
-
-        return string.Empty;
-    }
 }
