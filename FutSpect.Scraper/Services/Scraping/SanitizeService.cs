@@ -10,11 +10,11 @@ public class SanitizeService : ISanitizeService
         }
 
         ReadOnlySpan<char> span = value;
-        var noNewLines = RemoveNewLines(span);
+        var noNewLines = ReplaceNewLinesWithSpace(span);
         return RemoveExtraWhitespace(noNewLines);
     }
 
-    private static string RemoveNewLines(ReadOnlySpan<char> span)
+    private static string ReplaceNewLinesWithSpace(ReadOnlySpan<char> span)
     {
         if (span.IsEmpty)
         {
@@ -26,7 +26,11 @@ public class SanitizeService : ISanitizeService
 
         foreach (var c in span)
         {
-            if (c is not '\r' and not '\n')
+            if (c is '\r' or '\n')
+            {
+                result[position++] = ' ';
+            }
+            else
             {
                 result[position++] = c;
             }
