@@ -1,4 +1,3 @@
-using System.Text.RegularExpressions;
 using FutSpect.Scraper.Constants;
 using FutSpect.Scraper.Extensions;
 using FutSpect.Scraper.Interfaces;
@@ -14,21 +13,22 @@ namespace FutSpect.Scraper.Scrapers;
 public partial class MlsLeagueScraper
 (
     IMlsLeagueService mlsLeagueService,
-    IPlayerInfoParseService playerInfoParseService
+    IPlayerInfoParseService playerInfoParseService,
+    ISanitizeService sanitizeService
 ) : ILeagueScraper
 {
     const string LeagueSiteUrl = "https://mlssoccer.com";
     const string PlayerSiteUrl = "https://www.mlssoccer.com/players/*/";
 
-    public async Task Scrape(IBrowser browser)
+    public async Task Scrape(IBrowserContext browserContext)
     {   
         var leagueId = await mlsLeagueService.GetLeagueId();
 
-        var clubs = await browser.OpenPageAndExecute($"{LeagueSiteUrl}/clubs", ScrapeClubs);
+        var clubs = await browserContext.OpenPageAndExecute($"{LeagueSiteUrl}/clubs", ScrapeClubs);
 
         foreach (var club in clubs)
         {
-            await ScrapePlayers(browser, club);
+            await ScrapePlayers(browserContext, club);
         }
 
         Console.WriteLine("Test");
@@ -80,9 +80,9 @@ public partial class MlsLeagueScraper
         };
     }
 
-    private async Task<List<PlayerScrapeInfo>> ScrapePlayers(IBrowser browser, ClubScrapeInfo clubScrapeInfo)
+    private async Task<List<PlayerScrapeInfo>> ScrapePlayers(IBrowserContext browserContext, ClubScrapeInfo clubScrapeInfo)
     {
-        var page = await browser.NewPageAsync();
+        var page = await browserContext.NewPageAsync();
 
         await page.GotoAsync(clubScrapeInfo.RosterUrl);
         await page.WaitForSelectorAsync(".mls-c-active-roster__table");
@@ -160,7 +160,7 @@ public partial class MlsLeagueScraper
 
             if (string.Equals(property, MlsPlayerElementConstants.Birthplace, StringComparison.OrdinalIgnoreCase))
             {
-                birthPlace = value?.Replace("\\n", string.Empty);
+                birthPlace = sanitizeService.Sanitize(value);
             }
         }
 

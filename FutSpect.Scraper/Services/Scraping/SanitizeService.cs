@@ -2,7 +2,7 @@ namespace FutSpect.Scraper.Services.Scraping;
 
 public class SanitizeService : ISanitizeService
 {
-    public string Sanitize(string value)
+    public string Sanitize(string? value)
     {
         if (string.IsNullOrEmpty(value))
         {
@@ -10,49 +10,13 @@ public class SanitizeService : ISanitizeService
         }
 
         ReadOnlySpan<char> span = value;
-        var noNewLines = ReplaceNewLinesWithSpace(span);
-        return RemoveExtraWhitespace(noNewLines);
-    }
-
-    private static string ReplaceNewLinesWithSpace(ReadOnlySpan<char> span)
-    {
-        if (span.IsEmpty)
-        {
-            return string.Empty;
-        }
-
         Span<char> result = stackalloc char[span.Length];
         var position = 0;
+        var previousWasSpace = true;
 
         foreach (var c in span)
         {
-            if (c is '\r' or '\n')
-            {
-                result[position++] = ' ';
-            }
-            else
-            {
-                result[position++] = c;
-            }
-        }
-
-        return new string(result[..position]);
-    }
-
-    private static string RemoveExtraWhitespace(ReadOnlySpan<char> span)
-    {
-        if (span.IsEmpty)
-        {
-            return string.Empty;
-        }
-
-        Span<char> result = stackalloc char[span.Length];
-        var position = 0;
-        var previousWasSpace = true; // Treat start of string as space to trim leading spaces
-
-        foreach (var c in span)
-        {
-            if (char.IsWhiteSpace(c))
+            if (ShouldReplaceCharacter(c))
             {
                 if (!previousWasSpace)
                 {
@@ -75,4 +39,6 @@ public class SanitizeService : ISanitizeService
 
         return new string(result[..position]);
     }
+
+    private static bool ShouldReplaceCharacter(char c) => c is '\r' or '\n' || char.IsWhiteSpace(c);
 }

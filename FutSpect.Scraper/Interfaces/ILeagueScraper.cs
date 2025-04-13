@@ -4,5 +4,5 @@ namespace FutSpect.Scraper.Interfaces;
 
 public interface ILeagueScraper
 {
-    Task Scrape(IBrowser browser);
+    Task Scrape(IBrowserContext browserContext);
 }
