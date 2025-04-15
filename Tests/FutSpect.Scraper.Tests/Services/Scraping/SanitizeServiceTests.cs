@@ -68,4 +68,27 @@ public class SanitizeServiceTests
         var result = _sanitizeService.Sanitize(input);
         result.ShouldBe(expected);
     }
+
+    [Theory]
+    [InlineData(null, "")]
+    [InlineData("", "")]
+    [InlineData("   ", "")]
+    public void ToTitleCase_WhenNullOrEmpty_ReturnsEmptyString(string? input, string expected)
+    {
+        var result = _sanitizeService.ToTitleCase(input);
+        result.ShouldBe(expected);
+    }
+
+    [Theory]
+    [InlineData("EL PASO LOCOMOTIVE FC", "El Paso Locomotive FC")]
+    [InlineData("MIAMI FC", "Miami FC")]
+    [InlineData("OAKLAND ROOTS SC", "Oakland Roots SC")]
+    [InlineData("FC TULSA", "FC Tulsa")]
+    [InlineData("TAMPA BAY ROWDIES", "Tampa Bay Rowdies")]
+
+    public void ToTitleCase_WhenValidInput_ReturnsTitleCaseWithPreservedAbbreviations(string input, string expected)
+    {
+        var result = _sanitizeService.ToTitleCase(input);
+        result.ShouldBe(expected);
+    }
 }

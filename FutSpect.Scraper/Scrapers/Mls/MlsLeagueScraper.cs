@@ -8,7 +8,7 @@ using FutSpect.Scraper.Services.Scraping;
 using FutSpect.Shared.Extensions;
 using Microsoft.Playwright;
 
-namespace FutSpect.Scraper.Scrapers;
+namespace FutSpect.Scraper.Scrapers.Mls;
 
 public partial class MlsLeagueScraper
 (
@@ -30,8 +30,6 @@ public partial class MlsLeagueScraper
         {
             await ScrapePlayers(browserContext, club);
         }
-
-        Console.WriteLine("Test");
     }
 
     private static async Task<ClubScrapeInfo[]> ScrapeClubs(IPage page)
