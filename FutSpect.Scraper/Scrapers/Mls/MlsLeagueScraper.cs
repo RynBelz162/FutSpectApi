@@ -20,30 +20,24 @@ public partial class MlsLeagueScraper
     const string LeagueSiteUrl = "https://mlssoccer.com";
     const string PlayerSiteUrl = "https://www.mlssoccer.com/players/*/";
 
-    public async Task Scrape(IBrowserContext browserContext)
-    {   
+    public async Task<ClubScrapeInfo[]> ScrapeClubs(IBrowserContext browserContext)
+    {
         var leagueId = await mlsLeagueService.GetLeagueId();
 
-        var clubs = await browserContext.OpenPageAndExecute($"{LeagueSiteUrl}/clubs", ScrapeClubs);
-
-        foreach (var club in clubs)
+        var clubs = await browserContext.OpenPageAndExecute<ClubScrapeInfo[]>($"{LeagueSiteUrl}/clubs", async (page) =>
         {
-            await ScrapePlayers(browserContext, club);
-        }
+            var clubs = await page.Locator(".mls-o-clubs-hub-clubs-list__club").AllAsync();
+
+            var clubInfoTasks = clubs.Select(x => ScrapeClub(x, leagueId));
+
+            var results = await Task.WhenAll(clubInfoTasks);
+            return [.. results.WhereNotNull()];
+        });
+
+        return clubs;
     }
 
-    private static async Task<ClubScrapeInfo[]> ScrapeClubs(IPage page)
-    {
-        var clubs = await page.Locator(".mls-o-clubs-hub-clubs-list__club").AllAsync();
-
-        var clubInfoTasks = clubs.Select(ScrapeClub);
-
-        var results = await Task.WhenAll(clubInfoTasks);
-
-        return [.. results.WhereNotNull()];
-    }
-
-    private static async Task<ClubScrapeInfo?> ScrapeClub(ILocator locator)
+    private static async Task<ClubScrapeInfo?> ScrapeClub(ILocator locator, int leagueId)
     {
         var clubLogo = locator.Locator(".mls-o-clubs-hub-clubs-list__club-logo");
 
@@ -67,6 +61,7 @@ public partial class MlsLeagueScraper
         return new ClubScrapeInfo
         {
             Name = name,
+            LeagueId = leagueId,
             Image = new()
             {
                 ImageSrcUrl = imageSrc,

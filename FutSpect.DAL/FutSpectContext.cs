@@ -4,6 +4,7 @@ using FutSpect.DAL.Entities.Lookups;
 using FutSpect.DAL.Entities.Players;
 using FutSpect.DAL.Entities.Scraping;
 using Microsoft.EntityFrameworkCore;
+using Npgsql.EntityFrameworkCore.PostgreSQL.ValueGeneration;
 
 namespace FutSpect.DAL;
 
@@ -39,7 +40,8 @@ public class FutSpectContext : DbContext
 
         modelBuilder.Entity<ClubLogoEntity>()
             .Property(x => x.Id)
-            .HasDefaultValueSql("uuid_generate_v7()");
+            .HasValueGenerator<NpgsqlSequentialGuidValueGenerator>()
+            .ValueGeneratedNever();
     }
 
     protected override void OnConfiguring(DbContextOptionsBuilder options)

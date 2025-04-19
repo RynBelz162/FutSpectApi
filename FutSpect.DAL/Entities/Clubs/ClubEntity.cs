@@ -1,6 +1,6 @@
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
-using FutSpect.DAL.Entities.Lookups;
+using FutSpect.DAL.Entities.Leagues;
 using Microsoft.EntityFrameworkCore;
 
 namespace FutSpect.DAL.Entities.Clubs;
@@ -17,10 +17,16 @@ public class ClubEntity
     [MaxLength(100)]
     public required string Name { get; init; }
 
-    public required int CountryId { get; init; }
+    public required int LeagueId { get; init; }
 
-    [ForeignKey(nameof(CountryId))]
-    public CountryEntity? Country { get; init; }
+    [Unicode(false)]
+    [MaxLength(150)]
+    public string? RosterUrl { get; init; }
 
-    public ClubLogoEntity? Logo { get; init; }
+    [Unicode(false)]
+    [MaxLength(150)]
+    public string? ScheduleUrl { get; init; }
+
+    [ForeignKey(nameof(LeagueId))]
+    public LeagueEntity? League { get; init; }
 }

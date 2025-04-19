@@ -18,7 +18,7 @@ public class ScraperService(IEnumerable<ILeagueScraper> leagueScrapers) : IHoste
                 UserAgent = Constants.UserAgents.GetRandom()
             });
 
-            await scraper.Scrape(context);
+            _ = await scraper.ScrapeClubs(context);
             await context.CloseAsync();
         });
 

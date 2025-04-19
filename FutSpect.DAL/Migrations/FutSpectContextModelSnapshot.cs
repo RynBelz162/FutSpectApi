@@ -30,10 +30,7 @@ namespace FutSpect.DAL.Migrations
 
                     NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
 
-                    b.Property<Guid?>("ClubId")
-                        .HasColumnType("uuid");
-
-                    b.Property<int>("CountryId")
+                    b.Property<int>("LeagueId")
                         .HasColumnType("integer");
 
                     b.Property<string>("Name")
@@ -42,11 +39,19 @@ namespace FutSpect.DAL.Migrations
                         .IsUnicode(false)
                         .HasColumnType("character varying(100)");
 
+                    b.Property<string>("RosterUrl")
+                        .HasMaxLength(150)
+                        .IsUnicode(false)
+                        .HasColumnType("character varying(150)");
+
+                    b.Property<string>("ScheduleUrl")
+                        .HasMaxLength(150)
+                        .IsUnicode(false)
+                        .HasColumnType("character varying(150)");
+
                     b.HasKey("Id");
 
-                    b.HasIndex("ClubId");
-
-                    b.HasIndex("CountryId");
+                    b.HasIndex("LeagueId");
 
                     b.HasIndex("Name")
                         .IsUnique();
@@ -57,9 +62,7 @@ namespace FutSpect.DAL.Migrations
             modelBuilder.Entity("FutSpect.DAL.Entities.Clubs.ClubLogoEntity", b =>
                 {
                     b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uuid")
-                        .HasDefaultValueSql("uuid_generate_v7()");
+                        .HasColumnType("uuid");
 
                     b.Property<byte[]>("Bytes")
                         .IsRequired()
@@ -72,6 +75,8 @@ namespace FutSpect.DAL.Migrations
                         .HasColumnType("text");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("ClubId");
 
                     b.ToTable("ClubLogos");
                 });
@@ -214,24 +219,29 @@ namespace FutSpect.DAL.Migrations
 
                     b.HasIndex("TypeId");
 
-                    b.ToTable("ScrapeLedgers");
+                    b.ToTable("ScrapeLedger");
                 });
 
             modelBuilder.Entity("FutSpect.DAL.Entities.Clubs.ClubEntity", b =>
                 {
-                    b.HasOne("FutSpect.DAL.Entities.Clubs.ClubLogoEntity", "Logo")
+                    b.HasOne("FutSpect.DAL.Entities.Leagues.LeagueEntity", "League")
                         .WithMany()
-                        .HasForeignKey("ClubId");
-
-                    b.HasOne("FutSpect.DAL.Entities.Lookups.CountryEntity", "Country")
-                        .WithMany()
-                        .HasForeignKey("CountryId")
+                        .HasForeignKey("LeagueId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.Navigation("Country");
+                    b.Navigation("League");
+                });
 
-                    b.Navigation("Logo");
+            modelBuilder.Entity("FutSpect.DAL.Entities.Clubs.ClubLogoEntity", b =>
+                {
+                    b.HasOne("FutSpect.DAL.Entities.Clubs.ClubEntity", "Club")
+                        .WithMany()
+                        .HasForeignKey("ClubId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Club");
                 });
 
             modelBuilder.Entity("FutSpect.DAL.Entities.Leagues.LeagueEntity", b =>

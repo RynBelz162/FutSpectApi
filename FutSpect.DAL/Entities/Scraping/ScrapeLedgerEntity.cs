@@ -4,6 +4,7 @@ using FutSpect.DAL.Entities.Lookups;
 
 namespace FutSpect.DAL.Entities.Scraping;
 
+[Table("ScrapeLedger")]
 public class ScrapeLedgerEntity
 {
     [Key]

@@ -18,40 +18,34 @@ public partial class UslLeagueScraper
     const string LeagueSiteUrl = "https://www.uslchampionship.com";
     const string TeamsUrl = $"{LeagueSiteUrl}/league-teams";
 
-    public async Task Scrape(IBrowserContext browserContext)
-    {   
+    public async Task<ClubScrapeInfo[]> ScrapeClubs(IBrowserContext browserContext)
+    {
         var leagueId = await uslLeagueService.GetLeagueId();
 
-        var clubs = await browserContext.OpenPageAndExecute(TeamsUrl, ScrapeClubs);
+        var clubs = await browserContext.OpenPageAndExecute<ClubScrapeInfo[]>(TeamsUrl, async (page) => {
+            await page.WaitForSelectorAsync(".more");
+            
+            var clubLocators = await page.Locator(".more").AllAsync();
 
-        // foreach (var club in clubs)
-        // {
-        //     await ScrapePlayers(browserContext, club);
-        // }
-    }
-
-    private async Task<ClubScrapeInfo[]> ScrapeClubs(IBrowserContext browserContext, IPage page)
-    {
-        await page.WaitForSelectorAsync(".more");
-        
-        var clubLocators = await page.Locator(".more").AllAsync();
-
-        List<ClubScrapeInfo> results = [];
-        foreach (var locator in clubLocators)
-        {
-            var club = await ScrapeClub(browserContext, locator);
-            if (club is null)
+            List<ClubScrapeInfo> results = [];
+            foreach (var locator in clubLocators)
             {
-                continue;
+                var club = await ScrapeClub(browserContext, locator, leagueId);
+                if (club is null)
+                {
+                    continue;
+                }
+
+                results.Add(club);
             }
 
-            results.Add(club);
-        }
+            return [.. results];
+        });
 
-        return [.. results];
+        return clubs;
     }
 
-    private async Task<ClubScrapeInfo?> ScrapeClub(IBrowserContext browserContext, ILocator locator)
+    private async Task<ClubScrapeInfo?> ScrapeClub(IBrowserContext browserContext, ILocator locator, int leagueId)
     {
         var rosterUrl = await locator
             .GetByRole(AriaRole.Paragraph)
@@ -95,6 +89,7 @@ public partial class UslLeagueScraper
         return new ClubScrapeInfo
         {
             Name = sanitizeService.ToTitleCase(name),
+            LeagueId = leagueId,
             Image = new()
             {
                 ImageSrcUrl = imageSrc,

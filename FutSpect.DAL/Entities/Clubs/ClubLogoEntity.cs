@@ -6,6 +6,7 @@ namespace FutSpect.DAL.Entities.Clubs;
 public class ClubLogoEntity
 {
     [Key]
+    [DatabaseGenerated(DatabaseGeneratedOption.None)]
     public Guid Id { get; init; }
 
     [Required]

@@ -1,7 +1,8 @@
 ﻿using FutSpect.DAL;
 using FutSpect.Scraper;
 using FutSpect.Scraper.Interfaces;
-using FutSpect.Scraper.Scrapers;
+using FutSpect.Scraper.Scrapers.Mls;
+using FutSpect.Scraper.Scrapers.Usl;
 using FutSpect.Scraper.Services.Leagues.Mls;
 using FutSpect.Scraper.Services.Leagues.Usl;
 using FutSpect.Scraper.Services.Scraping;
