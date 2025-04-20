@@ -1,4 +1,5 @@
 using FutSpect.DAL.Repositories.Leagues;
+using FutSpect.DAL.Repositories.Scraping;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 
@@ -14,6 +15,7 @@ public static class ServiceCollectionExtension
         });
 
         serviceCollection.AddSingleton<ILeagueRepository, LeagueRepository>();
+        serviceCollection.AddSingleton<IScrapeLedgerRepository, ScrapeLedgerRepository>();
 
         return serviceCollection;
     }

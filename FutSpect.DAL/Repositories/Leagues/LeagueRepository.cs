@@ -4,8 +4,16 @@ using Microsoft.EntityFrameworkCore;
 
 namespace FutSpect.DAL.Repositories.Leagues;
 
-public class LeagueRepository(FutSpectContext futSpectContext) : ILeagueRepository
+public class LeagueRepository : ILeagueRepository
 {
+    private readonly FutSpectContext futSpectContext;
+
+    public LeagueRepository(FutSpectContext futSpectContext)
+    {
+        this.futSpectContext = futSpectContext;
+    }
+
+
     public async Task<League?> Get(string name)
     {
         return await futSpectContext.Leagues

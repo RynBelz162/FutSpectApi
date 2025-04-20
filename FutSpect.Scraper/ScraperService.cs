@@ -4,16 +4,23 @@ using Microsoft.Playwright;
 
 namespace FutSpect.Scraper;
 
-public class ScraperService(IEnumerable<ILeagueScraper> leagueScrapers) : IHostedService
+public class ScraperService : IHostedService
 {
+    private readonly IEnumerable<ILeagueScraper> _leagueScrapers;
+
+    public ScraperService(IEnumerable<ILeagueScraper> leagueScrapers)
+    {
+        _leagueScrapers = leagueScrapers;
+    }
+
     public async Task StartAsync(CancellationToken cancellationToken)
     {
         using var playwright = await Playwright.CreateAsync();
         await using var browser = await playwright.Chromium.LaunchAsync(new() { Headless = false });
 
-        var scrapeTasks = leagueScrapers.Select(async scraper =>
+        var scrapeTasks = _leagueScrapers.Select(async scraper =>
         {
-            var context = await browser.NewContextAsync(new ()
+            var context = await browser.NewContextAsync(new()
             {
                 UserAgent = Constants.UserAgents.GetRandom()
             });
