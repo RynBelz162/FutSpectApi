@@ -1,0 +1,111 @@
+using FutSpect.Scraper.Extensions;
+using FutSpect.Scraper.Models;
+using FutSpect.Scraper.Services;
+using FutSpect.Scraper.Services.Leagues;
+using FutSpect.Scraper.Services.Scraping;
+using FutSpect.Shared.Constants;
+using Microsoft.Playwright;
+
+namespace FutSpect.Scraper.Scrapers.Usl;
+
+public partial class UslClubScraper : IClubScraper
+{
+    const string LeagueSiteUrl = "https://www.uslchampionship.com";
+    const string TeamsUrl = $"{LeagueSiteUrl}/league-teams";
+
+    public string LeagueName => "United Soccer League";
+    public int CountryId => Countries.USA;
+    
+    private readonly ILeagueService _leagueService;
+    private readonly ISanitizeService _sanitizeService;
+
+    public UslClubScraper(ILeagueService leagueService, ISanitizeService sanitizeService)
+    {
+        _leagueService = leagueService;
+        _sanitizeService = sanitizeService;
+    }
+
+    public async Task<ClubScrapeInfo[]> ScrapeClubs(IBrowserContext browserContext)
+    {
+        var leagueId = await _leagueService.GetLeagueId(LeagueName, CountryId);
+
+        var clubs = await browserContext.OpenPageAndExecute<ClubScrapeInfo[]>(TeamsUrl, async (page) =>
+        {
+            await page.WaitForSelectorAsync(".more");
+
+            var clubLocators = await page.Locator(".more").AllAsync();
+
+            List<ClubScrapeInfo> results = [];
+            foreach (var locator in clubLocators)
+            {
+                var club = await ScrapeClub(browserContext, locator, leagueId);
+                if (club is null)
+                {
+                    continue;
+                }
+
+                results.Add(club);
+            }
+
+            return [.. results];
+        });
+
+        return clubs;
+    }
+
+    private async Task<ClubScrapeInfo?> ScrapeClub(IBrowserContext browserContext, ILocator locator, int leagueId)
+    {
+        var rosterUrl = await locator
+            .GetByRole(AriaRole.Paragraph)
+            .Nth(2)
+            .GetByRole(AriaRole.Link, new() { Name = "Roster" })
+            .GetAttributeAsync("href");
+
+        var scheduleUrl = await locator
+            .GetByRole(AriaRole.Paragraph)
+            .Nth(0)
+            .GetByRole(AriaRole.Link, new() { Name = "Schedule" })
+            .GetAttributeAsync("href");
+
+        if (string.IsNullOrEmpty(rosterUrl) || string.IsNullOrEmpty(scheduleUrl))
+        {
+            return null;
+        }
+
+        var page = await browserContext.NewPageAsync();
+        await page.GotoAsync(scheduleUrl);
+        await page.WaitForSelectorAsync(".clubLogo");
+
+        var imageSrc = await page
+            .Locator(".clubLogo")
+            .GetByRole(AriaRole.Img)
+            .GetAttributeAsync("src");
+        
+        var name = await page.Locator(".teamInfo")
+            .GetByRole(AriaRole.Heading)
+            .InnerTextAsync();
+
+        if (string.IsNullOrWhiteSpace(imageSrc) || string.IsNullOrWhiteSpace(name))
+        {
+            return null;
+        }
+
+        var (imageBytes, imageExtension) = await ImageDownloaderService.DownloadImageAsync(imageSrc);
+
+        await page.CloseAsync();
+
+        return new ClubScrapeInfo
+        {
+            Name = _sanitizeService.ToTitleCase(name),
+            LeagueId = leagueId,
+            Image = new()
+            {
+                ImageSrcUrl = imageSrc,
+                ImageBytes = imageBytes,
+                ImageExtension = imageExtension,
+            },
+            RosterUrl = $"{LeagueSiteUrl}{rosterUrl}",
+            ScheduleUrl = $"{LeagueSiteUrl}{scheduleUrl}"
+        };
+    }
+}

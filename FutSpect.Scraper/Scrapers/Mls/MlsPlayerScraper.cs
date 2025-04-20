@@ -1,83 +1,29 @@
 using FutSpect.Scraper.Constants;
-using FutSpect.Scraper.Extensions;
-using FutSpect.Scraper.Interfaces;
 using FutSpect.Scraper.Models;
 using FutSpect.Scraper.Services;
-using FutSpect.Scraper.Services.Leagues.Mls;
 using FutSpect.Scraper.Services.Scraping;
-using FutSpect.Shared.Extensions;
 using Microsoft.Playwright;
 
-namespace FutSpect.Scraper.Scrapers.Mls;
+namespace  FutSpect.Scraper.Scrapers.Mls;
 
-public partial class MlsLeagueScraper
-(
-    IMlsLeagueService mlsLeagueService,
-    IPlayerInfoParseService playerInfoParseService,
-    ISanitizeService sanitizeService
-) : ILeagueScraper
+public class MlsPlayScraper : IPlayerScraper
 {
-    const string LeagueSiteUrl = "https://mlssoccer.com";
     const string PlayerSiteUrl = "https://www.mlssoccer.com/players/*/";
 
-    public async Task<ClubScrapeInfo[]> ScrapeClubs(IBrowserContext browserContext)
+    private readonly IPlayerInfoParseService _playerInfoParseService;
+    private readonly ISanitizeService _sanitizeService;
+
+    public MlsPlayScraper(IPlayerInfoParseService playerInfoParseService, ISanitizeService sanitizeService)
     {
-        var leagueId = await mlsLeagueService.GetLeagueId();
-
-        var clubs = await browserContext.OpenPageAndExecute<ClubScrapeInfo[]>($"{LeagueSiteUrl}/clubs", async (page) =>
-        {
-            var clubs = await page.Locator(".mls-o-clubs-hub-clubs-list__club").AllAsync();
-
-            var clubInfoTasks = clubs.Select(x => ScrapeClub(x, leagueId));
-
-            var results = await Task.WhenAll(clubInfoTasks);
-            return [.. results.WhereNotNull()];
-        });
-
-        return clubs;
+        _playerInfoParseService = playerInfoParseService;
+        _sanitizeService = sanitizeService;
     }
 
-    private static async Task<ClubScrapeInfo?> ScrapeClub(ILocator locator, int leagueId)
-    {
-        var clubLogo = locator.Locator(".mls-o-clubs-hub-clubs-list__club-logo");
-
-        var imageElement = clubLogo.Locator("picture").Locator("img");
-        var imageSrc = await imageElement.GetAttributeAsync("src");
-        var name = await imageElement.GetAttributeAsync("alt");
-
-        if (string.IsNullOrWhiteSpace(imageSrc) || string.IsNullOrWhiteSpace(name))
-        {
-            return null;
-        }
-
-        var (imageBytes, imageExtension) = await ImageDownloaderService.DownloadImageAsync(imageSrc);
-
-        var links = locator.Locator(".mls-o-clubs-hub-clubs-list__club-info")
-            .Locator(".mls-o-clubs-hub-clubs-list__club-links");
-
-        var detailsHref = await links.GetByText("Details").GetAttributeAsync("href");
-        var scheduleHref = await links.GetByText("Schedule").GetAttributeAsync("href");
-
-        return new ClubScrapeInfo
-        {
-            Name = name,
-            LeagueId = leagueId,
-            Image = new()
-            {
-                ImageSrcUrl = imageSrc,
-                ImageBytes = imageBytes,
-                ImageExtension = imageExtension,
-            },
-            RosterUrl = $"{LeagueSiteUrl}{detailsHref}roster",
-            ScheduleUrl = $"{LeagueSiteUrl}{scheduleHref}"
-        };
-    }
-
-    private async Task<List<PlayerScrapeInfo>> ScrapePlayers(IBrowserContext browserContext, ClubScrapeInfo clubScrapeInfo)
+    public async Task<List<PlayerScrapeInfo>> ScrapePlayers(IBrowserContext browserContext, string rosterUrl)
     {
         var page = await browserContext.NewPageAsync();
 
-        await page.GotoAsync(clubScrapeInfo.RosterUrl);
+        await page.GotoAsync(rosterUrl);
         await page.WaitForSelectorAsync(".mls-c-active-roster__table");
 
         var rows = await page
@@ -116,7 +62,7 @@ public partial class MlsLeagueScraper
         await page.WaitForURLAsync(PlayerSiteUrl);
 
         var header = await page.Locator(".mls-o-masthead__text").TextContentAsync();
-        var number = playerInfoParseService.GetNumber(header);
+        var number = _playerInfoParseService.GetNumber(header);
 
         var imageElement = page.Locator(".mls-o-masthead__branded-image > picture > img");
         var imageSrc = await imageElement.GetAttributeAsync("src");
@@ -142,18 +88,18 @@ public partial class MlsLeagueScraper
 
             if (string.Equals(property, MlsPlayerElementConstants.Name, StringComparison.OrdinalIgnoreCase))
             {
-                (firstName, lastName) = playerInfoParseService.GetName(value);
+                (firstName, lastName) = _playerInfoParseService.GetName(value);
                 continue;
             }
 
             if (string.Equals(property, MlsPlayerElementConstants.Position, StringComparison.OrdinalIgnoreCase))
             {
-                positionId = playerInfoParseService.GetPositionId(value);
+                positionId = _playerInfoParseService.GetPositionId(value);
             }
 
             if (string.Equals(property, MlsPlayerElementConstants.Birthplace, StringComparison.OrdinalIgnoreCase))
             {
-                birthPlace = sanitizeService.Sanitize(value);
+                birthPlace = _sanitizeService.Sanitize(value);
             }
         }
 

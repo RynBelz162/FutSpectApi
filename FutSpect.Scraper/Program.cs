@@ -14,7 +14,8 @@ var connectionString = builder.Configuration.GetConnectionString("FutSpect")
 builder.Services
     .AddDatabase(connectionString)
     .AddServices()
-    .AddScrapers();
+    .AddScrapers()
+    .AddBackgroundJobs();
 
 IHost host = builder.Build();
 await host.RunAsync();

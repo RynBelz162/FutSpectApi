@@ -1,104 +1,14 @@
-using FutSpect.Scraper.Extensions;
-using FutSpect.Scraper.Interfaces;
 using FutSpect.Scraper.Models;
-using FutSpect.Scraper.Services;
-using FutSpect.Scraper.Services.Leagues.Usl;
-using FutSpect.Scraper.Services.Scraping;
 using Microsoft.Playwright;
 
 namespace FutSpect.Scraper.Scrapers.Usl;
 
-public partial class UslLeagueScraper
-(
-    IUslLeagueService uslLeagueService,
-    IPlayerInfoParseService playerInfoParseService,
-    ISanitizeService sanitizeService
-) : ILeagueScraper
+public class UslPlayerScraper : IPlayerScraper
 {
-    const string LeagueSiteUrl = "https://www.uslchampionship.com";
-    const string TeamsUrl = $"{LeagueSiteUrl}/league-teams";
-
-    public async Task<ClubScrapeInfo[]> ScrapeClubs(IBrowserContext browserContext)
+    // TODO: USL Player Scraper not currently working
+    public Task<List<PlayerScrapeInfo>> ScrapePlayers(IBrowserContext browserContext, string rosterUrl)
     {
-        var leagueId = await uslLeagueService.GetLeagueId();
-
-        var clubs = await browserContext.OpenPageAndExecute<ClubScrapeInfo[]>(TeamsUrl, async (page) => {
-            await page.WaitForSelectorAsync(".more");
-            
-            var clubLocators = await page.Locator(".more").AllAsync();
-
-            List<ClubScrapeInfo> results = [];
-            foreach (var locator in clubLocators)
-            {
-                var club = await ScrapeClub(browserContext, locator, leagueId);
-                if (club is null)
-                {
-                    continue;
-                }
-
-                results.Add(club);
-            }
-
-            return [.. results];
-        });
-
-        return clubs;
-    }
-
-    private async Task<ClubScrapeInfo?> ScrapeClub(IBrowserContext browserContext, ILocator locator, int leagueId)
-    {
-        var rosterUrl = await locator
-            .GetByRole(AriaRole.Paragraph)
-            .Nth(2)
-            .GetByRole(AriaRole.Link, new() { Name = "Roster" })
-            .GetAttributeAsync("href");
-
-        var scheduleUrl = await locator
-            .GetByRole(AriaRole.Paragraph)
-            .Nth(0)
-            .GetByRole(AriaRole.Link, new() { Name = "Schedule" })
-            .GetAttributeAsync("href");
-
-        if (string.IsNullOrEmpty(rosterUrl) || string.IsNullOrEmpty(scheduleUrl))
-        {
-            return null;
-        }
-
-        var page = await browserContext.NewPageAsync();
-        await page.GotoAsync(scheduleUrl);
-        await page.WaitForSelectorAsync(".clubLogo");
-
-        var imageSrc = await page
-            .Locator(".clubLogo")
-            .GetByRole(AriaRole.Img)
-            .GetAttributeAsync("src");
-        
-        var name = await page.Locator(".teamInfo")
-            .GetByRole(AriaRole.Heading)
-            .InnerTextAsync();
-
-        if (string.IsNullOrWhiteSpace(imageSrc) || string.IsNullOrWhiteSpace(name))
-        {
-            return null;
-        }
-
-        var (imageBytes, imageExtension) = await ImageDownloaderService.DownloadImageAsync(imageSrc);
-
-        await page.CloseAsync();
-
-        return new ClubScrapeInfo
-        {
-            Name = sanitizeService.ToTitleCase(name),
-            LeagueId = leagueId,
-            Image = new()
-            {
-                ImageSrcUrl = imageSrc,
-                ImageBytes = imageBytes,
-                ImageExtension = imageExtension,
-            },
-            RosterUrl = $"{LeagueSiteUrl}{rosterUrl}",
-            ScheduleUrl = $"{LeagueSiteUrl}{scheduleUrl}"
-        };
+        return Task.FromResult<List<PlayerScrapeInfo>>([]);
     }
 
     // private async Task<List<PlayerScrapeInfo>> ScrapePlayers(IBrowserContext browserContext, ClubScrapeInfo clubScrapeInfo)
@@ -107,10 +17,10 @@ public partial class UslLeagueScraper
     //     try
     //     {
     //         await page.GotoAsync(clubScrapeInfo.RosterUrl);
-            
+
     //         // Wait for dynamic content to load
     //         await page.WaitForLoadStateAsync(LoadState.NetworkIdle);
-            
+
     //         // The roster data is loaded dynamically, so we need to wait for it
     //         await page.WaitForLoadStateAsync(LoadState.DOMContentLoaded);
     //         await page.WaitForSelectorAsync(".roster-player, [data-player-id], .player-card", new() 
@@ -121,7 +31,7 @@ public partial class UslLeagueScraper
 
     //         // Try to locate player cards with various possible selectors
     //         var playerCards = await page.Locator(".roster-player, [data-player-id], .player-card").AllAsync();
-            
+
     //         var playerScrapeTasks = playerCards.Select(async player =>
     //         {
     //             try 

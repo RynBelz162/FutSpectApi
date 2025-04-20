@@ -1,9 +1,11 @@
 using FutSpect.Scraper.Models;
 using Microsoft.Playwright;
 
-namespace FutSpect.Scraper.Interfaces;
+namespace FutSpect.Scraper.Scrapers;
 
-public interface ILeagueScraper
+public interface IClubScraper
 {
+    string LeagueName { get; }
+    int CountryId { get; }
     Task<ClubScrapeInfo[]> ScrapeClubs(IBrowserContext browserContext);
 }
