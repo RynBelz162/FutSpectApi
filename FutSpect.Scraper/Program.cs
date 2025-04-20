@@ -1,18 +1,18 @@
 ﻿using FutSpect.DAL;
-using FutSpect.Scraper;
 using FutSpect.Scraper.Extensions;
-using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using Microsoft.Extensions.Configuration;
 
 var builder = Host.CreateApplicationBuilder(args);
 
-builder.Services.AddHostedService<ScraperService>();
+builder.Configuration
+    .AddJsonFile("appsettings.json", optional: true, reloadOnChange: true);
 
-const string ConnectionString = "Server=127.0.0.1;Port=5432;Database=FutSpect;User Id=postgres;Password=postgres;";
-
-builder.Services.AddDatabase(ConnectionString);
+var connectionString = builder.Configuration.GetConnectionString("FutSpect")
+    ?? throw new InvalidOperationException("Connection string 'FutSpect' not found.");
 
 builder.Services
+    .AddDatabase(connectionString)
     .AddServices()
     .AddScrapers();
 
