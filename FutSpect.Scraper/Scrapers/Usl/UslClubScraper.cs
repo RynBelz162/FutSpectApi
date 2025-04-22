@@ -4,6 +4,7 @@ using FutSpect.Scraper.Services;
 using FutSpect.Scraper.Services.Leagues;
 using FutSpect.Scraper.Services.Scraping;
 using FutSpect.Shared.Constants;
+using FutSpect.Shared.Models.Leagues;
 using Microsoft.Playwright;
 
 namespace FutSpect.Scraper.Scrapers.Usl;
@@ -12,9 +13,6 @@ public partial class UslClubScraper : IClubScraper
 {
     const string LeagueSiteUrl = "https://www.uslchampionship.com";
     const string TeamsUrl = $"{LeagueSiteUrl}/league-teams";
-
-    public string LeagueName => "United Soccer League";
-    public int CountryId => Countries.USA;
     
     private readonly ILeagueService _leagueService;
     private readonly ISanitizeService _sanitizeService;
@@ -25,9 +23,18 @@ public partial class UslClubScraper : IClubScraper
         _sanitizeService = sanitizeService;
     }
 
+    public League League => new()
+    {
+        Name = "USL Championship",
+        Abbreviation = "USLC",
+        CountryId = Countries.USA,
+        HasProRel = false,
+        PyramidLevel = 2
+    };
+
     public async Task<ClubScrapeInfo[]> ScrapeClubs(IBrowserContext browserContext)
     {
-        var leagueId = await _leagueService.GetLeagueId(LeagueName, CountryId);
+        var leagueId = await _leagueService.GetOrSave(League);
 
         var clubs = await browserContext.OpenPageAndExecute<ClubScrapeInfo[]>(TeamsUrl, async (page) =>
         {

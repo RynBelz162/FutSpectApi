@@ -14,17 +14,11 @@ public class LeagueRepository : ILeagueRepository
     }
 
 
-    public async Task<League?> Get(string name)
+    public async Task<int?> Get(string name, int countryId)
     {
         return await futSpectContext.Leagues
-            .Where(x => x.Name == name)
-            .Select(x => new League
-            {
-                Id = x.Id,
-                Name = x.Name,
-                CountryId = x.CountryId,
-                CountryName = x.Country.Name
-            })
+            .Where(x => x.Name == name && x.CountryId == countryId)
+            .Select(x => x.Id)
             .FirstOrDefaultAsync();
     }
 
@@ -33,7 +27,9 @@ public class LeagueRepository : ILeagueRepository
         var entity = new LeagueEntity
         {
             Name = league.Name,
+            Abbreviation = league.Abbreviation,
             CountryId = league.CountryId,
+            PyramidLevel = league.PyramidLevel
         };
 
         await futSpectContext.AddAsync(entity);

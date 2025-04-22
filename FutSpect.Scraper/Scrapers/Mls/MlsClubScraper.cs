@@ -4,6 +4,7 @@ using FutSpect.Scraper.Services;
 using FutSpect.Scraper.Services.Leagues;
 using FutSpect.Shared.Constants;
 using FutSpect.Shared.Extensions;
+using FutSpect.Shared.Models.Leagues;
 using Microsoft.Playwright;
 
 namespace FutSpect.Scraper.Scrapers.Mls;
@@ -11,8 +12,6 @@ namespace FutSpect.Scraper.Scrapers.Mls;
 public partial class MlsClubScraper : IClubScraper
 {
     const string LeagueSiteUrl = "https://mlssoccer.com";
-    public string LeagueName => "Major League Soccer";
-    public int CountryId => Countries.USA;
 
     private readonly ILeagueService _leagueService;
 
@@ -21,9 +20,18 @@ public partial class MlsClubScraper : IClubScraper
         _leagueService = leagueService;
     }
 
+    public League League => new()
+    {
+        Name = "Major League Soccer",
+        Abbreviation = "MLS",
+        CountryId = Countries.USA,
+        HasProRel = false,
+        PyramidLevel = 1
+    }; 
+
     public async Task<ClubScrapeInfo[]> ScrapeClubs(IBrowserContext browserContext)
     {
-        var leagueId = await _leagueService.GetLeagueId(LeagueName, CountryId);
+        var leagueId = await _leagueService.GetOrSave(League);
 
         var clubs = await browserContext.OpenPageAndExecute<ClubScrapeInfo[]>($"{LeagueSiteUrl}/clubs", async (page) =>
         {

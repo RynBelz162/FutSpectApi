@@ -12,19 +12,13 @@ public class LeagueService : ILeagueService
         _leagueRepository = leagueRepository;
     }
 
-    public async Task<int> GetLeagueId(string name, int countryId)
+    public async Task<int> GetOrSave(League league)
     {
-        var league = await _leagueRepository.Get(name);
-        if (league is not null)
+        var leagueId = await _leagueRepository.Get(league.Name, league.CountryId);
+        if (leagueId is not null)
         {
-            return league.Id;
+            return leagueId.Value;
         }
-
-        league = new League
-        {
-            Name = name,
-            CountryId = countryId,
-        };
 
         return await _leagueRepository.Save(league);
     }
