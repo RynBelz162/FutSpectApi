@@ -24,8 +24,8 @@ public class ScrapeLedgerService : IScrapeLedgerService
         await _scrapeLedgerRepository.Add(scrapeLedger);
     }
 
-    public async Task<bool> Any(int leagueId, int typeId, DateTime createdDate)
+    public async Task<bool> Any(string league, int countryId, int typeId, DateTime createdDate)
     {
-        return await _scrapeLedgerRepository.Any(leagueId, typeId, createdDate);
+        return await _scrapeLedgerRepository.Any(league, countryId, typeId, createdDate);
     }
 }

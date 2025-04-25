@@ -26,11 +26,14 @@ public class ScrapeLedgerRepository : IScrapeLedgerRepository
         await _context.SaveChangesAsync();
     }
 
-    public async Task<bool> Any(int leagueId, int typeId, DateTime createdDate)
+    public async Task<bool> Any(string name, int countryId, int typeId, DateTime createdDate)
     {
         return await _context.ScrapeLedgers
-            .AnyAsync(sl => sl.LeagueId == leagueId
+            .AnyAsync(sl =>
+                sl.League.Name == name
+                && sl.League.CountryId == countryId
                 && sl.TypeId == typeId
-                && sl.CreatedDate.Date >= createdDate.Date);
+                && sl.CreatedDate.Date >= createdDate.Date
+            );
     }
 }

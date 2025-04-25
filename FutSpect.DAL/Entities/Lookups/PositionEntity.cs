@@ -16,7 +16,7 @@ public class PositionEntity
     [MaxLength(10)]
     public required string Name { get; init; }
 
-    public static PositionEntity[] DefaultValues =>
+    private static PositionEntity[] DefaultValues =>
     [
         new PositionEntity
         {
@@ -40,7 +40,7 @@ public class PositionEntity
         },
     ];
 
-    public static int[] PositionIds => [Positions.Goalkeeper, Positions.Defender, Positions.Forward, Positions.Midfielder];
+    private static int[] PositionIds => [Positions.Goalkeeper, Positions.Defender, Positions.Forward, Positions.Midfielder];
 
     public static void SeedData(DbContext dbContext)
     {
@@ -70,7 +70,7 @@ public class PositionEntity
                 .Set<PositionEntity>()
                 .AddRangeAsync(DefaultValues);
 
-            dbContext.SaveChanges();
+            await dbContext.SaveChangesAsync(cancellationToken);
         }
     } 
 }

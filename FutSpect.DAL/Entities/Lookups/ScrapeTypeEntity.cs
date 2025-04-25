@@ -16,21 +16,33 @@ public class ScrapeTypeEntity
     [MaxLength(75)]
     public required string Name { get; init; }
 
+    private static ScrapeTypeEntity[] DefaultValues =>
+    [
+        new ScrapeTypeEntity
+        {
+            Id = ScrapeTypes.LeagueInfo,
+            Name = "League Info",
+        },
+        new ScrapeTypeEntity
+        {
+            Id = ScrapeTypes.ClubInfo,
+            Name = "Club Info",
+        },
+    ];
+
+    private static int[] TypeIds => [ScrapeTypes.LeagueInfo, ScrapeTypes.ClubInfo];
+
     public static void SeedData(DbContext dbContext)
     {
-        var leagueInfoType = dbContext.Set<ScrapeTypeEntity>().FirstOrDefault(x => x.Id == ScrapeTypes.LeagueInfo);
-        if (leagueInfoType is null)
+        var entityCount = dbContext
+            .Set<ScrapeTypeEntity>()
+            .Count(x => TypeIds.Contains(x.Id));
+
+        if (entityCount != DefaultValues.Length)
         {
             dbContext
                 .Set<ScrapeTypeEntity>()
-                .Add
-                (
-                    new ScrapeTypeEntity
-                    {
-                        Id = 1,
-                        Name = "League Info"
-                    }
-                );
+                .AddRange(DefaultValues);
 
             dbContext.SaveChanges();
         }
@@ -38,24 +50,17 @@ public class ScrapeTypeEntity
 
     public static async Task SeedDataAsync(DbContext dbContext, CancellationToken cancellationToken)
     {
-        var leagueInfoType = await dbContext
+        var entityCount = await dbContext
             .Set<ScrapeTypeEntity>()
-            .FirstOrDefaultAsync(x => x.Id == ScrapeTypes.LeagueInfo, cancellationToken: cancellationToken);
+            .CountAsync(x => TypeIds.Contains(x.Id));
 
-        if (leagueInfoType is null)
+        if (entityCount != DefaultValues.Length)
         {
-            dbContext
+            await dbContext
                 .Set<ScrapeTypeEntity>()
-                .Add
-                (
-                    new ScrapeTypeEntity
-                    {
-                        Id = 1,
-                        Name = "League Info"
-                    }
-                );
+                .AddRangeAsync(DefaultValues);
 
             await dbContext.SaveChangesAsync(cancellationToken);
         }
-    }
+    } 
 }

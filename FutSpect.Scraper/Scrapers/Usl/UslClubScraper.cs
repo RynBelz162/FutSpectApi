@@ -36,7 +36,7 @@ public partial class UslClubScraper : IClubScraper
     {
         var leagueId = await _leagueService.GetOrSave(League);
 
-        var clubs = await browserContext.OpenPageAndExecute<ClubScrapeInfo[]>(TeamsUrl, async (page) =>
+        return await browserContext.OpenPageAndExecute<ClubScrapeInfo[]>(TeamsUrl, async (page) =>
         {
             await page.WaitForSelectorAsync(".more");
 
@@ -56,8 +56,6 @@ public partial class UslClubScraper : IClubScraper
 
             return [.. results];
         });
-
-        return clubs;
     }
 
     private async Task<ClubScrapeInfo?> ScrapeClub(IBrowserContext browserContext, ILocator locator, int leagueId)
