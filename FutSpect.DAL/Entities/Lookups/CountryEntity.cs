@@ -65,6 +65,6 @@ public class CountryEntity
                 );
 
             await dbContext.SaveChangesAsync(cancellationToken);
-        } 
+        }
     }
 }

@@ -13,7 +13,7 @@ public class ClubLogoEntity
     public required int ClubId { get; init; }
 
     [Required]
-    public required byte[] Bytes { get; init;}
+    public required byte[] Bytes { get; init; }
 
     public string? SrcUrl { get; init; }
 

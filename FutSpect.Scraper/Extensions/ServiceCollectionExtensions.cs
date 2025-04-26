@@ -1,9 +1,9 @@
+using System.Reflection;
 using FutSpect.Scraper.BackgroundJobs;
 using FutSpect.Scraper.Scrapers;
 using FutSpect.Scraper.Services.Leagues;
 using FutSpect.Scraper.Services.Scraping;
 using Microsoft.Extensions.DependencyInjection;
-using System.Reflection;
 
 namespace FutSpect.Scraper.Extensions;
 

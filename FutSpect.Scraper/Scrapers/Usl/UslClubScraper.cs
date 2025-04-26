@@ -13,7 +13,7 @@ public partial class UslClubScraper : IClubScraper
 {
     const string LeagueSiteUrl = "https://www.uslchampionship.com";
     const string TeamsUrl = $"{LeagueSiteUrl}/league-teams";
-    
+
     private readonly ILeagueService _leagueService;
     private readonly ISanitizeService _sanitizeService;
 
@@ -85,7 +85,7 @@ public partial class UslClubScraper : IClubScraper
             .Locator(".clubLogo")
             .GetByRole(AriaRole.Img)
             .GetAttributeAsync("src");
-        
+
         var name = await page.Locator(".teamInfo")
             .GetByRole(AriaRole.Heading)
             .InnerTextAsync();

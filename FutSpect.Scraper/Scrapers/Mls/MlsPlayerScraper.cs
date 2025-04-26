@@ -4,7 +4,7 @@ using FutSpect.Scraper.Services;
 using FutSpect.Scraper.Services.Scraping;
 using Microsoft.Playwright;
 
-namespace  FutSpect.Scraper.Scrapers.Mls;
+namespace FutSpect.Scraper.Scrapers.Mls;
 
 public class MlsPlayScraper : IPlayerScraper
 {
@@ -105,7 +105,7 @@ public class MlsPlayScraper : IPlayerScraper
 
         return new PlayerScrapeInfo
         {
-            FirstName = firstName, 
+            FirstName = firstName,
             LastName = lastName,
             PositionId = positionId,
             Number = number,

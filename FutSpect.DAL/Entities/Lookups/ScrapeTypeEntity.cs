@@ -62,5 +62,5 @@ public class ScrapeTypeEntity
 
             await dbContext.SaveChangesAsync(cancellationToken);
         }
-    } 
+    }
 }

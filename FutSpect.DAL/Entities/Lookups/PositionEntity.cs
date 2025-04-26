@@ -72,5 +72,5 @@ public class PositionEntity
 
             await dbContext.SaveChangesAsync(cancellationToken);
         }
-    } 
+    }
 }

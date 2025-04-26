@@ -1,10 +1,10 @@
 ﻿using FutSpect.DAL;
 using FutSpect.Scraper.Extensions;
-using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Configuration;
-using Serilog;
-using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Hosting;
+using Microsoft.Extensions.Logging;
+using Serilog;
 
 var builder = Host.CreateApplicationBuilder(args);
 

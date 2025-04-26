@@ -57,13 +57,13 @@ public class SanitizeService : ISanitizeService
         }
 
         var words = value.Split([' ', '-', '_'], StringSplitOptions.RemoveEmptyEntries);
-        if (words.Length == 0) 
+        if (words.Length == 0)
         {
             return string.Empty;
         }
 
         var sb = new StringBuilder();
-        
+
         for (var i = 0; i < words.Length; i++)
         {
             var word = words[i];
@@ -71,7 +71,7 @@ public class SanitizeService : ISanitizeService
             {
                 sb.Append(' ');
             }
-            
+
             if (SoccerAbbreviations.Contains(word))
             {
                 sb.Append(word.ToUpper());

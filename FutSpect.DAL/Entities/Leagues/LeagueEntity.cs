@@ -15,7 +15,7 @@ public class LeagueEntity
     [Required]
     [Unicode(false)]
     [MaxLength(100)]
-    public required string Name { get; set;}
+    public required string Name { get; set; }
 
     [Required]
     [Unicode(false)]

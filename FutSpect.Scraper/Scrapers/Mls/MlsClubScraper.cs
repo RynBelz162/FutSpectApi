@@ -27,7 +27,7 @@ public partial class MlsClubScraper : IClubScraper
         CountryId = Countries.USA,
         HasProRel = false,
         PyramidLevel = 1
-    }; 
+    };
 
     public async Task<ClubScrapeInfo[]> ScrapeClubs(IBrowserContext browserContext)
     {
