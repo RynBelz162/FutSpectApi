@@ -13,8 +13,16 @@ public class LeagueRepository : ILeagueRepository
         this.futSpectContext = futSpectContext;
     }
 
+    public async Task<int> Get(string name, int countryId)
+    {
+        return await futSpectContext.Leagues
+            .Where(x => x.Name == name && x.CountryId == countryId)
+            .Select(x => x.Id)
+            .SingleAsync();
+    }
 
-    public async Task<int?> Get(string name, int countryId)
+
+    public async Task<int?> Find(string name, int countryId)
     {
         return await futSpectContext.Leagues
             .Where(x => x.Name == name && x.CountryId == countryId)

@@ -14,7 +14,7 @@ public class LeagueService : ILeagueService
 
     public async Task<int> GetOrSave(League league)
     {
-        var leagueId = await _leagueRepository.Get(league.Name, league.CountryId);
+        var leagueId = await _leagueRepository.Find(league.Name, league.CountryId);
         if (leagueId is not null)
         {
             return leagueId.Value;

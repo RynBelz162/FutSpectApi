@@ -4,6 +4,7 @@ using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Configuration;
 using Serilog;
 using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.DependencyInjection;
 
 var builder = Host.CreateApplicationBuilder(args);
 
@@ -20,6 +21,8 @@ builder.Configuration
 
 var connectionString = builder.Configuration.GetConnectionString("FutSpect")
     ?? throw new InvalidOperationException("Connection string 'FutSpect' not found.");
+
+builder.Services.AddSingleton(TimeProvider.System);
 
 builder.Services
     .AddDatabase(connectionString)
