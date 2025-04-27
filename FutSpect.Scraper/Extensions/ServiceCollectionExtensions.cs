@@ -1,6 +1,7 @@
 using System.Reflection;
 using FutSpect.Scraper.BackgroundJobs;
 using FutSpect.Scraper.Scrapers;
+using FutSpect.Scraper.Services.Clubs;
 using FutSpect.Scraper.Services.Leagues;
 using FutSpect.Scraper.Services.Scraping;
 using Microsoft.Extensions.DependencyInjection;
@@ -15,6 +16,7 @@ public static class ServiceCollectionExtensions
         serviceCollection.AddSingleton<ISanitizeService, SanitizeService>();
         serviceCollection.AddSingleton<IScrapeLedgerService, ScrapeLedgerService>();
         serviceCollection.AddSingleton<ILeagueService, LeagueService>();
+        serviceCollection.AddSingleton<IClubService, ClubService>();
 
         return serviceCollection;
     }
