@@ -22,9 +22,9 @@ builder.Configuration
 var connectionString = builder.Configuration.GetConnectionString("FutSpect")
     ?? throw new InvalidOperationException("Connection string 'FutSpect' not found.");
 
-builder.Services.AddSingleton(TimeProvider.System);
-
 builder.Services
+    .AddConfigOptions(builder.Configuration)
+    .AddSingleton(TimeProvider.System)
     .AddDatabase(connectionString)
     .AddServices()
     .AddScrapers()

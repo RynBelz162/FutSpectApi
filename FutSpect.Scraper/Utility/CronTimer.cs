@@ -26,6 +26,14 @@ public class CronTimer
         return await timer.WaitForNextTickAsync(cancellationToken);
     }
 
+    public DateTime GetNextOccurrence()
+    {
+        var now = _timeProvider.GetUtcNow().UtcDateTime;
+
+        return _cron.GetNextOccurrence(now)
+            ?? throw new InvalidOperationException("Invalid cron expression.");
+    }
+
     private static TimeSpan DetermineNextInterval(DateTime now, DateTime nextOccurrence)
     {
         var interval = nextOccurrence - now;

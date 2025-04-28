@@ -1,9 +1,11 @@
 using FutSpect.DAL.Constants;
+using FutSpect.Scraper.Options;
 using FutSpect.Scraper.Scrapers;
 using FutSpect.Scraper.Services.Scraping;
 using FutSpect.Scraper.Utility;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Options;
 using Microsoft.Playwright;
 
 namespace FutSpect.Scraper.BackgroundJobs;
@@ -20,18 +22,22 @@ public class ClubScraperService : BackgroundService
         IEnumerable<IClubScraper> clubScrapers,
         ILogger<ClubScraperService> logger,
         IScrapeLedgerService scrapeLedgerService,
-        TimeProvider timeProvider)
+        TimeProvider timeProvider,
+        IOptions<BackgroundJobOptions> options)
     {
         _clubScrapers = clubScrapers;
         _logger = logger;
         _scrapeLedgerService = scrapeLedgerService;
         _timeProvider = timeProvider;
 
-        _timer = new CronTimer("@monthly", _timeProvider);
+        _timer = new CronTimer(options.Value.ClubScrapeCron, _timeProvider);
     }
 
     protected override async Task ExecuteAsync(CancellationToken stoppingToken)
     {
+        _logger.LogInformation("Daily club scraping service started at: {Time}", _timeProvider.GetUtcNow());
+        _logger.LogInformation("Next club scraping scheduled at: {Time}", _timer.GetNextOccurrence());
+
         while (await _timer.WaitForNextTickAsync(stoppingToken))
         {
             _logger.LogInformation("Daily club scraping started at: {Time}", _timeProvider.GetUtcNow());
@@ -52,7 +58,9 @@ public class ClubScraperService : BackgroundService
             }
 
             await browser.CloseAsync();
+
             _logger.LogInformation("Daily club scraping finished at: {Time}", _timeProvider.GetUtcNow());
+            _logger.LogInformation("Next club scraping scheduled at: {Time}", _timer.GetNextOccurrence());
         }
     }
 
