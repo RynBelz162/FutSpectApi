@@ -9,4 +9,5 @@ public record League
     public required bool HasProRel { get; init; }
     public required short PyramidLevel { get; init; }
     public string CountryName { get; init; } = string.Empty;
+    public string Website { get; init; } = string.Empty;
 }

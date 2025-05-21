@@ -38,7 +38,7 @@ public class LeagueServiceTests
         var result = await _leagueService.GetOrSave(league);
 
         result.ShouldBe(existingLeagueId);
-        _leagueRepositoryMock.Verify(repo => repo.Save(It.IsAny<League>()), Times.Never);
+        _leagueRepositoryMock.Verify(repo => repo.Add(It.IsAny<League>()), Times.Never);
     }
 
     [Fact]
@@ -60,7 +60,7 @@ public class LeagueServiceTests
             .ReturnsAsync((int?)null);
 
         _leagueRepositoryMock
-            .Setup(repo => repo.Save(league))
+            .Setup(repo => repo.Add(league))
             .ReturnsAsync(existingLeagueId);
 
         var result = await _leagueService.GetOrSave(league);

@@ -2,5 +2,6 @@ namespace FutSpect.Scraper.Options;
 
 public class BackgroundJobOptions
 {
-    public string ClubScrapeCron { get; init; } = "@monthly";
+    public required string ClubScrapeCron { get; init; }
+    public required string LeagueScrapeCron { get; init; }
 }

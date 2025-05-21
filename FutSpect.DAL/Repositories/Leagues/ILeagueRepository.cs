@@ -8,5 +8,7 @@ public interface ILeagueRepository
 
     Task<int?> Find(string name, int countryId);
 
-    Task<int> Save(League league);
+    Task<int> Add(League league);
+    
+    Task AddImage(LeagueLogo logo);
 }

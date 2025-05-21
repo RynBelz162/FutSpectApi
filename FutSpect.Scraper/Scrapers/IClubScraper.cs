@@ -7,5 +7,5 @@ namespace FutSpect.Scraper.Scrapers;
 public interface IClubScraper
 {
     League League { get; }
-    Task<ClubScrapeInfo[]> ScrapeClubs(IBrowserContext browserContext);
+    Task<ClubScrapeInfo[]> Scrape(IBrowserContext browserContext);
 }

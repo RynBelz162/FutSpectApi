@@ -29,7 +29,7 @@ public partial class MlsClubScraper : IClubScraper
         PyramidLevel = 1
     };
 
-    public async Task<ClubScrapeInfo[]> ScrapeClubs(IBrowserContext browserContext)
+    public async Task<ClubScrapeInfo[]> Scrape(IBrowserContext browserContext)
     {
         var leagueId = await _leagueService.GetOrSave(League);
 

@@ -19,7 +19,7 @@ public class MlsPlayScraper : IPlayerScraper
         _sanitizeService = sanitizeService;
     }
 
-    public async Task<List<PlayerScrapeInfo>> ScrapePlayers(IBrowserContext browserContext, string rosterUrl)
+    public async Task<List<PlayerScrapeInfo>> Scrape(IBrowserContext browserContext, string rosterUrl)
     {
         var page = await browserContext.NewPageAsync();
 

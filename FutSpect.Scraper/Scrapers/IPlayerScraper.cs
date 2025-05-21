@@ -5,5 +5,5 @@ namespace FutSpect.Scraper.Scrapers;
 
 public interface IPlayerScraper
 {
-    Task<List<PlayerScrapeInfo>> ScrapePlayers(IBrowserContext browserContext, string rosterUrl);
+    Task<List<PlayerScrapeInfo>> Scrape(IBrowserContext browserContext, string rosterUrl);
 }

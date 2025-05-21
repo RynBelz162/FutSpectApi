@@ -26,6 +26,8 @@ public class FutSpectContext : DbContext
 
     public DbSet<LeagueEntity> Leagues { get; set; }
 
+    public DbSet<LeagueLogoEntity> LeagueLogos { get; set; }
+
     public DbSet<ScrapeLedgerEntity> ScrapeLedgers { get; set; }
 
     public DbSet<ScrapeTypeEntity> ScrapeTypes { get; set; }

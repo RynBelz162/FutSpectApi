@@ -1,12 +1,13 @@
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using FutSpect.DAL.Entities.Lookups;
+using FutSpect.DAL.Interfaces;
 using Microsoft.EntityFrameworkCore;
 
 namespace FutSpect.DAL.Entities.Leagues;
 
 [Index(nameof(Name), nameof(CountryId), IsUnique = true)]
-public class LeagueEntity
+public class LeagueEntity : IRecordable
 {
     [Key]
     [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
@@ -29,7 +30,15 @@ public class LeagueEntity
     public bool HasProRel { get; init; }
 
     [Required]
+    [Unicode(false)]
+    [MaxLength(100)]
+    public required string Website { get; set; }
+
+    [Required]
     public required int CountryId { get; init; }
+
+    [Column(TypeName = "datetime2(2)")]
+    public required DateTime CreatedDate { get; init; }
 
     [ForeignKey(nameof(CountryId))]
     public CountryEntity Country { get; init; } = null!;

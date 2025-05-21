@@ -6,7 +6,7 @@ namespace FutSpect.Scraper.Scrapers.Usl;
 public class UslPlayerScraper : IPlayerScraper
 {
     // TODO: USL Player Scraper not currently working
-    public Task<List<PlayerScrapeInfo>> ScrapePlayers(IBrowserContext browserContext, string rosterUrl)
+    public Task<List<PlayerScrapeInfo>> Scrape(IBrowserContext browserContext, string rosterUrl)
     {
         return Task.FromResult<List<PlayerScrapeInfo>>([]);
     }

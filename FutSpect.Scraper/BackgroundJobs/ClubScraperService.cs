@@ -1,6 +1,7 @@
 using FutSpect.DAL.Constants;
 using FutSpect.Scraper.Options;
 using FutSpect.Scraper.Scrapers;
+using FutSpect.Scraper.Services.Clubs;
 using FutSpect.Scraper.Services.Scraping;
 using FutSpect.Scraper.Utility;
 using Microsoft.Extensions.Hosting;
@@ -17,30 +18,33 @@ public class ClubScraperService : BackgroundService
     private readonly ILogger<ClubScraperService> _logger;
     private readonly IScrapeLedgerService _scrapeLedgerService;
     private readonly TimeProvider _timeProvider;
+    private readonly IClubService _clubService;
 
     public ClubScraperService(
         IEnumerable<IClubScraper> clubScrapers,
         ILogger<ClubScraperService> logger,
         IScrapeLedgerService scrapeLedgerService,
         TimeProvider timeProvider,
-        IOptions<BackgroundJobOptions> options)
+        IOptions<BackgroundJobOptions> options,
+        IClubService clubService)
     {
+        _timer = new CronTimer(options.Value.ClubScrapeCron, timeProvider);
+
         _clubScrapers = clubScrapers;
         _logger = logger;
         _scrapeLedgerService = scrapeLedgerService;
         _timeProvider = timeProvider;
-
-        _timer = new CronTimer(options.Value.ClubScrapeCron, _timeProvider);
+        _clubService = clubService;
     }
 
     protected override async Task ExecuteAsync(CancellationToken stoppingToken)
     {
-        _logger.LogInformation("Daily club scraping service started at: {Time}", _timeProvider.GetUtcNow());
+        _logger.LogInformation("Club scraping service started at: {Time}", _timeProvider.GetUtcNow());
         _logger.LogInformation("Next club scraping scheduled at: {Time}", _timer.GetNextOccurrence());
 
         while (await _timer.WaitForNextTickAsync(stoppingToken))
         {
-            _logger.LogInformation("Daily club scraping started at: {Time}", _timeProvider.GetUtcNow());
+            _logger.LogInformation("Club scraping started at: {Time}", _timeProvider.GetUtcNow());
 
             using var playwright = await Playwright.CreateAsync();
             await using var browser = await playwright.Chromium.LaunchAsync(new() { Headless = true });
@@ -59,7 +63,7 @@ public class ClubScraperService : BackgroundService
 
             await browser.CloseAsync();
 
-            _logger.LogInformation("Daily club scraping finished at: {Time}", _timeProvider.GetUtcNow());
+            _logger.LogInformation("Club scraping finished at: {Time}", _timeProvider.GetUtcNow());
             _logger.LogInformation("Next club scraping scheduled at: {Time}", _timer.GetNextOccurrence());
         }
     }
@@ -76,7 +80,9 @@ public class ClubScraperService : BackgroundService
 
         try
         {
-            await scraper.ScrapeClubs(context);
+            var clubInfo = await scraper.Scrape(context);
+            await _clubService.Add(clubInfo);
+            
         }
         catch (Exception ex)
         {

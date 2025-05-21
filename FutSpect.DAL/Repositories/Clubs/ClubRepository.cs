@@ -24,6 +24,7 @@ public class ClubRepository : IClubRepository
             });
 
         await _context.Clubs.AddRangeAsync(entities);
+        await _context.SaveChangesAsync();
 
         return [.. entities.Select(x => (x.Id, x.Name))];
     }
@@ -39,6 +40,7 @@ public class ClubRepository : IClubRepository
                 Extension = x.FileExtension
             });
 
-        await _context.ClubLogos.AddRangeAsync(entities); 
+        await _context.ClubLogos.AddRangeAsync(entities);
+        await _context.SaveChangesAsync();
     }
 }
