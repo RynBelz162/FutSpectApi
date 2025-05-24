@@ -44,7 +44,7 @@ public class LeagueScraperService : BackgroundService
 
         while (await _timer.WaitForNextTickAsync(stoppingToken))
         {
-            _logger.LogInformation("Daily club scraping started at: {Time}", _timeProvider.GetUtcNow());
+            _logger.LogInformation("League scraping started at: {Time}", _timeProvider.GetUtcNow());
 
             using var playwright = await Playwright.CreateAsync();
             await using var browser = await playwright.Chromium.LaunchAsync(new() { Headless = true });
