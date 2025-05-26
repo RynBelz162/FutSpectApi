@@ -37,7 +37,6 @@ public class LeagueEntity : IRecordable
     [Required]
     public required int CountryId { get; init; }
 
-    [Column(TypeName = "datetime2(2)")]
     public required DateTime CreatedDate { get; init; }
 
     [ForeignKey(nameof(CountryId))]
