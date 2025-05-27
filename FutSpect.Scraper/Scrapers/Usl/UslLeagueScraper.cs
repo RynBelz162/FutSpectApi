@@ -3,18 +3,23 @@ using FutSpect.Scraper.Services;
 using FutSpect.Shared.Constants;
 using Microsoft.Playwright;
 
-namespace FutSpect.Scraper.Scrapers.Mls;
+namespace FutSpect.Scraper.Scrapers.Usl;
 
-public class MlsLeagueScraper : ILeagueScraper
+public class UslLeagueScraper : ILeagueScraper
 {
-    private const string LeagueUrl = "https://www.mlssoccer.com/";
+    private const string LeagueUrl = "https://www.uslchampionship.com/";
 
     public async Task<LeagueScrapeInfo?> Scrape(IBrowserContext browserContext)
     {
         var page = await browserContext.NewPageAsync();
         await page.GotoAsync(LeagueUrl);
 
-        var imageElement = page.Locator(".mls-c-header__club-logo").Locator("img");
+        var imageElement = page
+            .Locator("#megaFooter")
+            .Locator(".pageEl")
+            .Locator(".heroPhotoElement")
+            .Locator("img");
+
         var imageSrc = await imageElement.GetAttributeAsync("src");
 
         if (imageSrc is null)
@@ -24,13 +29,12 @@ public class MlsLeagueScraper : ILeagueScraper
 
         var (imageBytes, imageExtension) = await ImageDownloaderService.DownloadImageAsync(imageSrc);
 
-
         var leagueScrapeInfo = new LeagueScrapeInfo
         {
-            Name = "Major League Soccer",
-            Abbreviation = "MLS",
+            Name = "USL Championship",
+            Abbreviation = "USLC",
             HasProRel = false,
-            PyramidLevel = 1,
+            PyramidLevel = 2,
             Website = LeagueUrl,
             CountryId = Countries.USA,
             Image = new()

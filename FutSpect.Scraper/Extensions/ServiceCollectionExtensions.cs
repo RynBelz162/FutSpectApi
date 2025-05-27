@@ -25,13 +25,24 @@ public static class ServiceCollectionExtensions
 
     public static IServiceCollection AddScrapers(this IServiceCollection serviceCollection)
     {
-        var scraperTypes = Assembly.GetExecutingAssembly()
+        var assembly = Assembly.GetExecutingAssembly();
+
+        var clubScraperTypes = assembly
             .GetTypes()
             .Where(t => typeof(IClubScraper).IsAssignableFrom(t) && !t.IsInterface && !t.IsAbstract);
 
-        foreach (var scraperType in scraperTypes)
+        var leagueScraperTypes = assembly
+            .GetTypes()
+            .Where(t => typeof(ILeagueScraper).IsAssignableFrom(t) && !t.IsInterface && !t.IsAbstract);
+
+        foreach (var scraperType in clubScraperTypes)
         {
             serviceCollection.AddSingleton(typeof(IClubScraper), scraperType);
+        }
+
+        foreach (var scraperType in leagueScraperTypes)
+        {
+            serviceCollection.AddSingleton(typeof(ILeagueScraper), scraperType);
         }
 
         return serviceCollection;
@@ -39,7 +50,10 @@ public static class ServiceCollectionExtensions
 
     public static IServiceCollection AddBackgroundJobs(this IServiceCollection serviceCollection)
     {
-        serviceCollection.AddHostedService<ClubScraperService>();
+        serviceCollection
+            .AddHostedService<ClubScraperService>()
+            .AddHostedService<LeagueScraperService>();
+
         return serviceCollection;
     }
 

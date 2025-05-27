@@ -51,8 +51,6 @@ public class LeagueScraperService : BackgroundService
 
             foreach (var scraper in _leagueScrapers)
             {
-                var scrapeInterval = _timeProvider.GetUtcNow().AddMonths(-1).UtcDateTime;
-
                 var context = await browser.NewContextAsync(new()
                 {
                     UserAgent = Constants.UserAgents.GetRandom()
@@ -68,7 +66,6 @@ public class LeagueScraperService : BackgroundService
                     }
 
                     await _leagueService.Add(league);
-
                     await _scrapeLedgerService.Add(league.Name, league.CountryId, ScrapeTypes.LeagueInfo);
                 }
                 catch (Exception ex)

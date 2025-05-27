@@ -32,18 +32,17 @@ public partial class MlsClubScraper : IClubScraper
     public async Task<ClubScrapeInfo[]> Scrape(IBrowserContext browserContext)
     {
         var leagueId = await _leagueService.GetOrSave(League);
+        var page = await browserContext.NewPageAsync();
+        await page.GotoAsync(LeagueSiteUrl);
 
-        var clubs = await browserContext.OpenPageAndExecute<ClubScrapeInfo[]>($"{LeagueSiteUrl}/clubs", async (page) =>
-        {
-            var clubs = await page.Locator(".mls-o-clubs-hub-clubs-list__club").AllAsync();
+        var clubs = await page.Locator(".mls-o-clubs-hub-clubs-list__club").AllAsync();
 
-            var clubInfoTasks = clubs.Select(x => ScrapeClub(x, leagueId));
+        var clubInfoTasks = clubs.Select(x => ScrapeClub(x, leagueId));
 
-            var results = await Task.WhenAll(clubInfoTasks);
-            return [.. results.WhereNotNull()];
-        });
+        var results = await Task.WhenAll(clubInfoTasks);
 
-        return clubs;
+        await page.CloseAsync();
+        return [.. results.WhereNotNull()];
     }
 
     private static async Task<ClubScrapeInfo?> ScrapeClub(ILocator locator, int leagueId)

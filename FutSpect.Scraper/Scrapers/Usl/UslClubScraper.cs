@@ -35,27 +35,27 @@ public partial class UslClubScraper : IClubScraper
     public async Task<ClubScrapeInfo[]> Scrape(IBrowserContext browserContext)
     {
         var leagueId = await _leagueService.GetOrSave(League);
+        var page = await browserContext.NewPageAsync();
 
-        return await browserContext.OpenPageAndExecute<ClubScrapeInfo[]>(TeamsUrl, async (page) =>
+        await page.GotoAsync(TeamsUrl);
+        await page.WaitForSelectorAsync(".more");
+
+        var clubLocators = await page.Locator(".more").AllAsync();
+
+        List<ClubScrapeInfo> results = [];
+        foreach (var locator in clubLocators)
         {
-            await page.WaitForSelectorAsync(".more");
-
-            var clubLocators = await page.Locator(".more").AllAsync();
-
-            List<ClubScrapeInfo> results = [];
-            foreach (var locator in clubLocators)
+            var club = await ScrapeClub(browserContext, locator, leagueId);
+            if (club is null)
             {
-                var club = await ScrapeClub(browserContext, locator, leagueId);
-                if (club is null)
-                {
-                    continue;
-                }
-
-                results.Add(club);
+                continue;
             }
 
-            return [.. results];
-        });
+            results.Add(club);
+        }
+
+        await page.CloseAsync();
+        return [.. results];
     }
 
     private async Task<ClubScrapeInfo?> ScrapeClub(IBrowserContext browserContext, ILocator locator, int leagueId)
