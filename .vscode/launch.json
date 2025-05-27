@@ -11,7 +11,7 @@
             "request": "launch",
             "preLaunchTask": "dotnet: build",
             "program": "${workspaceFolder}/FutSpect.Scraper/bin/Debug/net9.0/FutSpect.Scraper.dll",
-            "args": [],
+            "args": [ "--run-now:league" ],
             "cwd": "${workspaceFolder}",
             "stopAtEntry": false,
             "console": "internalConsole"

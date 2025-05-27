@@ -1,5 +1,6 @@
 using System.Reflection;
 using FutSpect.Scraper.BackgroundJobs;
+using FutSpect.Scraper.Helpers;
 using FutSpect.Scraper.Options;
 using FutSpect.Scraper.Scrapers;
 using FutSpect.Scraper.Services.Clubs;
@@ -57,10 +58,15 @@ public static class ServiceCollectionExtensions
         return serviceCollection;
     }
 
-    public static IServiceCollection AddConfigOptions(this IServiceCollection serviceCollection, IConfiguration configuration)
+    public static IServiceCollection AddConfigOptions(this IServiceCollection serviceCollection, IConfiguration configuration, string[] args)
     {
-        serviceCollection.Configure<BackgroundJobOptions>(
-            configuration.GetSection("BackgroundJobs"));
+        var scraperArgs = ArgumentHelper.ParseArguments(args, "--run-now:");
+
+        serviceCollection.Configure<BackgroundJobOptions>(options =>
+        {
+            configuration.GetSection("BackgroundJobs").Bind(options);
+            options.ScraperArgs = scraperArgs;
+        });
 
         return serviceCollection;
     }

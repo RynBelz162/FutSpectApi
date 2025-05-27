@@ -19,6 +19,7 @@ public class LeagueScraperService : BackgroundService
     private readonly IScrapeLedgerService _scrapeLedgerService;
     private readonly TimeProvider _timeProvider;
     private readonly ILeagueService _leagueService;
+    private readonly IOptions<BackgroundJobOptions> _options;
 
     public LeagueScraperService(
         IEnumerable<ILeagueScraper> leagueScrapers,
@@ -30,6 +31,7 @@ public class LeagueScraperService : BackgroundService
     {
         _timer = new CronTimer(options.Value.LeagueScrapeCron, timeProvider);
 
+        _options = options;
         _leagueScrapers = leagueScrapers;
         _logger = logger;
         _scrapeLedgerService = scrapeLedgerService;
