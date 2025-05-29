@@ -1,11 +1,10 @@
 using FutSpect.Api.Extensions;
 using FutSpect.DAL;
 using Scalar.AspNetCore;
+using Serilog;
 
 var builder = WebApplication.CreateBuilder(args);
 
-// Add services to the container.
-// Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
 builder.Services.AddOpenApi(options =>
 {
     options.AddDocumentTransformer((document, context, _) =>
@@ -14,16 +13,7 @@ builder.Services.AddOpenApi(options =>
         {
             Title = "FutSpect API",
             Version = "v1",
-            Description = """
-                Modern API for football information.
-                Supports JSON responses.
-                """,
-            Contact = new()
-            {
-                Name = "API Support",
-                Email = "support@futspect.com",
-                Url = new Uri("https://futspect.com/support")
-            }
+            Description = "Modern API for all football information.",
         };
         return Task.CompletedTask;
     });
@@ -36,6 +26,12 @@ builder.Services.AddControllers();
 builder.Services
     .AddDatabase(connectionString)
     .AddServices();
+
+Log.Logger = new LoggerConfiguration()
+    .WriteTo.Console()
+    .CreateLogger();
+
+builder.Host.UseSerilog();
 
 var app = builder.Build();
 
