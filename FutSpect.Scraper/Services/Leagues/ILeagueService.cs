@@ -5,6 +5,6 @@ namespace FutSpect.Scraper.Services.Leagues;
 
 public interface ILeagueService
 {
-    Task<int> GetOrSave(League league);
+    Task<int> GetId(League league);
     Task Add(LeagueScrapeInfo leagueInfo);
 }

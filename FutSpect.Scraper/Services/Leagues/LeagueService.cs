@@ -13,16 +13,8 @@ public class LeagueService : ILeagueService
         _leagueRepository = leagueRepository;
     }
 
-    public async Task<int> GetOrSave(League league)
-    {
-        var leagueId = await _leagueRepository.Find(league.Name, league.CountryId);
-        if (leagueId is not null)
-        {
-            return leagueId.Value;
-        }
-
-        return await _leagueRepository.Add(league);
-    }
+    public Task<int> GetId(League league) =>
+        _leagueRepository.GetId(league.Name, league.CountryId);
 
     public async Task Add(LeagueScrapeInfo leagueInfo)
     {

@@ -14,21 +14,12 @@ public class LeagueRepository : ILeagueRepository
         _futSpectContext = futSpectContext;
     }
 
-    public async Task<int> Get(string name, int countryId)
+    public async Task<int> GetId(string name, int countryId)
     {
         return await _futSpectContext.Leagues
             .Where(x => x.Name == name && x.CountryId == countryId)
             .Select(x => x.Id)
             .SingleAsync();
-    }
-
-
-    public async Task<int?> Find(string name, int countryId)
-    {
-        return await _futSpectContext.Leagues
-            .Where(x => x.Name == name && x.CountryId == countryId)
-            .Select(x => x.Id)
-            .FirstOrDefaultAsync();
     }
 
     public async Task<int> Add(League league)
@@ -63,5 +54,21 @@ public class LeagueRepository : ILeagueRepository
 
         await _futSpectContext.LeagueLogos.AddAsync(entity);
         await _futSpectContext.SaveChangesAsync();
+    }
+
+    public async Task<IEnumerable<League>> Get()
+    {
+        return await _futSpectContext.Leagues
+            .Select(l => new League
+            {
+                Id = l.Id,
+                Name = l.Name,
+                Abbreviation = l.Abbreviation,
+                CountryId = l.CountryId,
+                HasProRel = l.HasProRel,
+                PyramidLevel = l.PyramidLevel,
+                Website = l.Website
+            })
+            .ToListAsync();
     }
 }

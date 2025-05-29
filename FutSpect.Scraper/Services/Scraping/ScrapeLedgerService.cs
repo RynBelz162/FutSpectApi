@@ -17,7 +17,7 @@ public class ScrapeLedgerService : IScrapeLedgerService
 
     public async Task Add(string league, int countryId, int typeId)
     {
-        var leagueId = await _leagueRepository.Get(league, countryId);
+        var leagueId = await _leagueRepository.GetId(league, countryId);
         var scrapeLedger = new ScrapeLedger
         {
             LeagueId = leagueId,

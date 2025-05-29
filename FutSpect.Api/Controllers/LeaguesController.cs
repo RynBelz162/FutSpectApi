@@ -1,7 +1,7 @@
 using Microsoft.AspNetCore.Mvc;
-using FutSpect.DAL;
 using FutSpect.Shared.Models.Leagues;
-using Microsoft.EntityFrameworkCore;
+using FutSpect.Api.Services.Leagues;
+using System.ComponentModel;
 
 namespace FutSpect.Api.Controllers;
 
@@ -9,27 +9,20 @@ namespace FutSpect.Api.Controllers;
 [Route("[controller]")]
 public class LeaguesController : ControllerBase
 {
-    private readonly FutSpectContext _context;
+    private readonly ILeagueService _leagueService;
 
-    public LeaguesController(FutSpectContext context)
+    public LeaguesController(ILeagueService leagueService)
     {
-        _context = context;
+        _leagueService = leagueService;
     }
 
     [HttpGet]
+    [EndpointSummary("Retrieve all leagues")]
+    [EndpointDescription("Returns a list of all leagues.")]
+    [Tags("Leagues")]
     public async Task<ActionResult<IEnumerable<League>>> GetLeagues()
     {
-        var leagues = await _context.Leagues.ToListAsync();
-        var dtos = leagues.Select(l => new League
-        {
-            Id = l.Id,
-            Name = l.Name,
-            Abbreviation = l.Abbreviation,
-            CountryId = l.CountryId,
-            HasProRel = l.HasProRel,
-            PyramidLevel = l.PyramidLevel,
-            Website = l.Website
-        });
-        return Ok(dtos);
+        var leagues = await _leagueService.Get();
+        return Ok(leagues);
     }
 }

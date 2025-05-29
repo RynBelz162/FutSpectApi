@@ -1,8 +1,8 @@
 using FutSpect.DAL.Repositories.Leagues;
+using FutSpect.Scraper.Models;
 using FutSpect.Scraper.Services.Leagues;
 using FutSpect.Shared.Models.Leagues;
 using Moq;
-using Shouldly;
 
 namespace FutSpect.Scraper.Tests.Services.Leagues;
 
@@ -18,53 +18,32 @@ public class LeagueServiceTests
     }
 
     [Fact]
-    public async Task GetOrSave_ShouldReturnExistingLeagueId_WhenLeagueExists()
+    public async Task Add_WhenGivenLeagueScrapeInfo_SavesLeagueInfoAndLogo()
     {
-        const int existingLeagueId = 1;
-        var league = new League
-        {
-            Id = existingLeagueId,
-            Name = "Test",
-            Abbreviation = "TST",
-            HasProRel = false,
-            PyramidLevel = 1,
-            CountryId = 1
-        };
+        LeagueScrapeInfo leagueScrapeInfo =
+            new()
+            {
+                CountryId = 1,
+                Name = "Test Club 1",
+                Website = "https://club.com",
+                HasProRel = true,
+                PyramidLevel = 1,
+                Abbreviation = "TC1",
+                Image = new ScrapedImage
+                {
+                    ImageBytes = [],
+                    ImageSrcUrl = "https://club.com/image?=clubone",
+                    ImageExtension = ".png",
+                }
+            };
 
         _leagueRepositoryMock
-            .Setup(repo => repo.Find("Test", existingLeagueId))
-            .ReturnsAsync(existingLeagueId);
+            .Setup(x => x.Add(It.IsAny<League>()))
+            .ReturnsAsync(1);
 
-        var result = await _leagueService.GetOrSave(league);
+        await _leagueService.Add(leagueScrapeInfo);
 
-        result.ShouldBe(existingLeagueId);
-        _leagueRepositoryMock.Verify(repo => repo.Add(It.IsAny<League>()), Times.Never);
-    }
-
-    [Fact]
-    public async Task GetOrSave_ShouldSaveAndReturnNewLeagueId_WhenLeagueDoesNotExist()
-    {
-        const int existingLeagueId = 1;
-        var league = new League
-        {
-            Id = existingLeagueId,
-            Name = "Test",
-            Abbreviation = "TST",
-            HasProRel = false,
-            PyramidLevel = 1,
-            CountryId = 1
-        };
-
-        _leagueRepositoryMock
-            .Setup(repo => repo.Find("Test", existingLeagueId))
-            .ReturnsAsync((int?)null);
-
-        _leagueRepositoryMock
-            .Setup(repo => repo.Add(league))
-            .ReturnsAsync(existingLeagueId);
-
-        var result = await _leagueService.GetOrSave(league);
-
-        result.ShouldBe(existingLeagueId);
+        _leagueRepositoryMock.Verify(x => x.Add(It.IsAny<League>()), Times.Once);
+        _leagueRepositoryMock.Verify(x => x.AddImage(It.IsAny<LeagueLogo>()), Times.Once);
     }
 }

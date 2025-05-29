@@ -1,4 +1,3 @@
-using FutSpect.Scraper.Extensions;
 using FutSpect.Scraper.Models;
 using FutSpect.Scraper.Services;
 using FutSpect.Scraper.Services.Leagues;
@@ -31,7 +30,7 @@ public partial class MlsClubScraper : IClubScraper
 
     public async Task<ClubScrapeInfo[]> Scrape(IBrowserContext browserContext)
     {
-        var leagueId = await _leagueService.GetOrSave(League);
+        var leagueId = await _leagueService.GetId(League);
         var page = await browserContext.NewPageAsync();
         await page.GotoAsync(LeagueSiteUrl);
 
