@@ -44,7 +44,7 @@ public class LeagueRepository : ILeagueRepository
             CreatedDate = DateTime.UtcNow
         };
 
-        await _futSpectContext.AddAsync(entity);
+        await _futSpectContext.Leagues.AddAsync(entity);
         await _futSpectContext.SaveChangesAsync();
 
         return entity.Id;

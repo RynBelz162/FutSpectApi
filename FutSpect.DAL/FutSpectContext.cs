@@ -44,6 +44,11 @@ public class FutSpectContext : DbContext
             .Property(x => x.Id)
             .HasValueGenerator<NpgsqlSequentialGuidValueGenerator>()
             .ValueGeneratedNever();
+
+        modelBuilder.Entity<LeagueLogoEntity>()
+            .Property(x => x.Id)
+            .HasValueGenerator<NpgsqlSequentialGuidValueGenerator>()
+            .ValueGeneratedNever();
     }
 
     protected override void OnConfiguring(DbContextOptionsBuilder options)

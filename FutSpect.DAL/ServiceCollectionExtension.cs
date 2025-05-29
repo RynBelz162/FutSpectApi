@@ -15,9 +15,9 @@ public static class ServiceCollectionExtension
             opt.UseNpgsql(connectionString);
         });
 
-        serviceCollection.AddSingleton<ILeagueRepository, LeagueRepository>();
-        serviceCollection.AddSingleton<IClubRepository, ClubRepository>();
-        serviceCollection.AddSingleton<IScrapeLedgerRepository, ScrapeLedgerRepository>();
+        serviceCollection.AddScoped<ILeagueRepository, LeagueRepository>();
+        serviceCollection.AddScoped<IClubRepository, ClubRepository>();
+        serviceCollection.AddScoped<IScrapeLedgerRepository, ScrapeLedgerRepository>();
 
         return serviceCollection;
     }

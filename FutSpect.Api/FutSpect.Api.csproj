@@ -8,6 +8,12 @@
 
   <ItemGroup>
     <PackageReference Include="Microsoft.AspNetCore.OpenApi" Version="9.0.2" />
+    <PackageReference Include="Scalar.AspNetCore" Version="2.4.4" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\FutSpect.DAL\FutSpect.DAL.csproj" />
+    <ProjectReference Include="..\FutSpect.Shared\FutSpect.Shared.csproj" />
   </ItemGroup>
 
 </Project>

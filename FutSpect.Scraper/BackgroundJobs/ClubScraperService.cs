@@ -19,6 +19,7 @@ public class ClubScraperService : BackgroundService
     private readonly IScrapeLedgerService _scrapeLedgerService;
     private readonly TimeProvider _timeProvider;
     private readonly IClubService _clubService;
+    private readonly IOptions<BackgroundJobOptions> _options;
 
     public ClubScraperService(
         IEnumerable<IClubScraper> clubScrapers,
@@ -30,6 +31,7 @@ public class ClubScraperService : BackgroundService
     {
         _timer = new CronTimer(options.Value.ClubScrapeCron, timeProvider);
 
+        _options = options;
         _clubScrapers = clubScrapers;
         _logger = logger;
         _scrapeLedgerService = scrapeLedgerService;
@@ -42,36 +44,48 @@ public class ClubScraperService : BackgroundService
         _logger.LogInformation("Club scraping service started at: {Time}", _timeProvider.GetUtcNow());
         _logger.LogInformation("Next club scraping scheduled at: {Time}", _timer.GetNextOccurrence());
 
+        if (_options.Value.ScraperArgs.RunClubNow)
+        {
+            _logger.LogInformation("Club scrape timer bypass provided, running immediately.");
+            await Scrape();
+            return;
+        }
+
         while (await _timer.WaitForNextTickAsync(stoppingToken))
         {
             _logger.LogInformation("Club scraping started at: {Time}", _timeProvider.GetUtcNow());
 
-            using var playwright = await Playwright.CreateAsync();
-            await using var browser = await playwright.Chromium.LaunchAsync(new() { Headless = true });
-
-            foreach (var scraper in _clubScrapers)
-            {
-                var scrapeInterval = _timeProvider.GetUtcNow().AddMonths(-1).UtcDateTime;
-                if (await HasAlreadyScraped(scraper, scrapeInterval))
-                {
-                    continue;
-                }
-
-                await _scrapeLedgerService.Add(scraper.League.Name, scraper.League.CountryId, ScrapeTypes.ClubInfo);
-                await Scrape(browser, scraper);
-            }
-
-            await browser.CloseAsync();
+            await Scrape();
 
             _logger.LogInformation("Club scraping finished at: {Time}", _timeProvider.GetUtcNow());
             _logger.LogInformation("Next club scraping scheduled at: {Time}", _timer.GetNextOccurrence());
         }
     }
 
+    private async Task Scrape()
+    {
+        using var playwright = await Playwright.CreateAsync();
+        await using var browser = await playwright.Chromium.LaunchAsync(new() { Headless = true });
+
+        foreach (var scraper in _clubScrapers)
+        {
+            var scrapeInterval = _timeProvider.GetUtcNow().AddMonths(-1).UtcDateTime;
+            if (await HasAlreadyScraped(scraper, scrapeInterval))
+            {
+                continue;
+            }
+
+            await _scrapeLedgerService.Add(scraper.League.Name, scraper.League.CountryId, ScrapeTypes.ClubInfo);
+            await ScrapeClubs(browser, scraper);
+        }
+
+        await browser.CloseAsync();
+    }
+
     private async Task<bool> HasAlreadyScraped(IClubScraper scraper, DateTime scrapeInterval) =>
         await _scrapeLedgerService.Any(scraper.League.Name, scraper.League.CountryId, ScrapeTypes.ClubInfo, scrapeInterval);
 
-    private async Task Scrape(IBrowser browser, IClubScraper scraper)
+    private async Task ScrapeClubs(IBrowser browser, IClubScraper scraper)
     {
         var context = await browser.NewContextAsync(new()
         {
