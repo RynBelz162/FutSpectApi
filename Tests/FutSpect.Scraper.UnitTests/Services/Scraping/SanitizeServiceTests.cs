@@ -1,7 +1,7 @@
 using FutSpect.Scraper.Services.Scraping;
 using Shouldly;
 
-namespace FutSpect.Scraper.Tests.Services.Scraping;
+namespace FutSpect.Scraper.UnitTests.Services.Scraping;
 
 public class SanitizeServiceTests
 {

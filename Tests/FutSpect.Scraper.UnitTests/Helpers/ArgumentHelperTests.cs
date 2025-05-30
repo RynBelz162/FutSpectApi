@@ -1,6 +1,6 @@
 using FutSpect.Scraper.Helpers;
 
-namespace FutSpect.Scraper.Tests.Helpers;
+namespace FutSpect.Scraper.UnitTests.Helpers;
 
 public class ArgumentHelperTests
 {

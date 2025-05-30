@@ -2,7 +2,7 @@ using FutSpect.Scraper.Utility;
 using Microsoft.Extensions.Time.Testing;
 using Shouldly;
 
-namespace FutSpect.Scraper.Tests.Utility;
+namespace FutSpect.Scraper.UnitTests.Utility;
 
 public class CronTimerTests
 {

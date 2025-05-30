@@ -4,7 +4,7 @@ using FutSpect.Scraper.Services.Clubs;
 using FutSpect.Shared.Models.Clubs;
 using Moq;
 
-namespace FutSpect.Scraper.Tests.Services.Clubs;
+namespace FutSpect.Scraper.UnitTests.Services.Clubs;
 
 public class ClubServiceTests
 {
