@@ -1,3 +1,4 @@
+using FutSpect.DAL.Interfaces;
 using FutSpect.Shared.Models.Leagues;
 
 namespace FutSpect.DAL.Repositories.Leagues;
@@ -10,5 +11,5 @@ public interface ILeagueRepository
     
     Task AddImage(LeagueLogo logo);
 
-    Task<IEnumerable<League>> Get();
+    Task<IEnumerable<League>> Get(IPageable pageable);
 }

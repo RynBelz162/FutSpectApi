@@ -1,5 +1,6 @@
 using FutSpect.DAL.Entities.Clubs;
 using FutSpect.DAL.Entities.Leagues;
+using FutSpect.DAL.Interfaces;
 using FutSpect.Shared.Models.Leagues;
 using Microsoft.EntityFrameworkCore;
 
@@ -56,7 +57,7 @@ public class LeagueRepository : ILeagueRepository
         await _futSpectContext.SaveChangesAsync();
     }
 
-    public async Task<IEnumerable<League>> Get()
+    public async Task<IEnumerable<League>> Get(IPageable pageable)
     {
         return await _futSpectContext.Leagues
             .Select(l => new League
@@ -69,6 +70,9 @@ public class LeagueRepository : ILeagueRepository
                 PyramidLevel = l.PyramidLevel,
                 Website = l.Website
             })
+            .OrderBy(l => l.Name)
+            .Skip(pageable.Skip)
+            .Take(pageable.PageSize)
             .ToListAsync();
     }
 }

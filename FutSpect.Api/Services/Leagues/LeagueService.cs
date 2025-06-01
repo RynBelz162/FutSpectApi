@@ -1,4 +1,6 @@
+using FutSpect.DAL.Interfaces;
 using FutSpect.DAL.Repositories.Leagues;
+using FutSpect.Shared.Models;
 using FutSpect.Shared.Models.Leagues;
 
 namespace FutSpect.Api.Services.Leagues;
@@ -12,8 +14,14 @@ public class LeagueService : ILeagueService
         _leagueRepository = leagueRepository;
     }
 
-    public async Task<IEnumerable<League>> Get()
+    public async Task<Paged<League>> Get(IPageable pageable)
     {
-        return await _leagueRepository.Get();
+        var results = await _leagueRepository.Get(pageable);
+        return new Paged<League>
+        {
+            Items = results,
+            Page = pageable.Page,
+            PageSize = pageable.PageSize,
+        };
     }
 }

@@ -1,8 +1,10 @@
+using FutSpect.DAL.Interfaces;
+using FutSpect.Shared.Models;
 using FutSpect.Shared.Models.Leagues;
 
 namespace FutSpect.Api.Services.Leagues;
 
 public interface ILeagueService
 {
-    Task<IEnumerable<League>> Get();
+    Task<Paged<League>> Get(IPageable pageable);
 }
