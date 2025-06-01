@@ -14,7 +14,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\FutSpect.DAL\FutSpect.DAL.csproj" />
+    <ProjectReference Include="..\FutSpect.Dal\FutSpect.Dal.csproj" />
     <ProjectReference Include="..\FutSpect.Shared\FutSpect.Shared.csproj" />
   </ItemGroup>
 

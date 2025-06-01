@@ -1,4 +1,4 @@
-using FutSpect.DAL.Constants;
+using FutSpect.Dal.Constants;
 using FutSpect.Scraper.Options;
 using FutSpect.Scraper.Scrapers;
 using FutSpect.Scraper.Services.Leagues;

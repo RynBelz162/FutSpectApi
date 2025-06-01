@@ -1,4 +1,4 @@
-namespace FutSpect.DAL.Constants;
+namespace FutSpect.Dal.Constants;
 
 public static class ScrapeTypes
 {

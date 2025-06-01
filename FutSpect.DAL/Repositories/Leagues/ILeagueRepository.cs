@@ -1,7 +1,7 @@
-using FutSpect.DAL.Interfaces;
+using FutSpect.Dal.Interfaces;
 using FutSpect.Shared.Models.Leagues;
 
-namespace FutSpect.DAL.Repositories.Leagues;
+namespace FutSpect.Dal.Repositories.Leagues;
 
 public interface ILeagueRepository
 {

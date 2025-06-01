@@ -1,10 +1,10 @@
-using FutSpect.DAL.Entities.Clubs;
-using FutSpect.DAL.Entities.Leagues;
-using FutSpect.DAL.Interfaces;
+using FutSpect.Dal.Entities.Clubs;
+using FutSpect.Dal.Entities.Leagues;
+using FutSpect.Dal.Interfaces;
 using FutSpect.Shared.Models.Leagues;
 using Microsoft.EntityFrameworkCore;
 
-namespace FutSpect.DAL.Repositories.Leagues;
+namespace FutSpect.Dal.Repositories.Leagues;
 
 public class LeagueRepository : ILeagueRepository
 {

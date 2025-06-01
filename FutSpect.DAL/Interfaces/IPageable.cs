@@ -1,4 +1,4 @@
-namespace FutSpect.DAL.Interfaces;
+namespace FutSpect.Dal.Interfaces;
 
 public interface IPageable
 {

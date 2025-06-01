@@ -1,6 +1,6 @@
 using FutSpect.Shared.Models.Scraping;
 
-namespace FutSpect.DAL.Repositories.Scraping;
+namespace FutSpect.Dal.Repositories.Scraping;
 
 public interface IScrapeLedgerRepository
 {

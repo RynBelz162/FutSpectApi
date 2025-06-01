@@ -1,7 +1,7 @@
-using FutSpect.DAL.Entities.Clubs;
+using FutSpect.Dal.Entities.Clubs;
 using FutSpect.Shared.Models.Clubs;
 
-namespace FutSpect.DAL.Repositories.Clubs;
+namespace FutSpect.Dal.Repositories.Clubs;
 
 public class ClubRepository : IClubRepository
 {

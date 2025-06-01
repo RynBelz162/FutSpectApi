@@ -1,4 +1,4 @@
-using FutSpect.DAL.Interfaces;
+using FutSpect.Dal.Interfaces;
 
 namespace FutSpect.Api.Models;
 

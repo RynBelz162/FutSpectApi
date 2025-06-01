@@ -1,9 +1,9 @@
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
-using FutSpect.DAL.Constants;
+using FutSpect.Dal.Constants;
 using Microsoft.EntityFrameworkCore;
 
-namespace FutSpect.DAL.Entities.Lookups;
+namespace FutSpect.Dal.Entities.Lookups;
 
 [Index(nameof(Name), IsUnique = true)]
 public class ScrapeTypeEntity

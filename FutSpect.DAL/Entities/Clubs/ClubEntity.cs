@@ -1,9 +1,9 @@
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
-using FutSpect.DAL.Entities.Leagues;
+using FutSpect.Dal.Entities.Leagues;
 using Microsoft.EntityFrameworkCore;
 
-namespace FutSpect.DAL.Entities.Clubs;
+namespace FutSpect.Dal.Entities.Clubs;
 
 [Index(nameof(Name), IsUnique = true)]
 public class ClubEntity

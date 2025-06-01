@@ -4,7 +4,7 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
 #nullable disable
 
-namespace FutSpect.DAL.Migrations
+namespace FutSpect.Dal.Migrations
 {
     /// <inheritdoc />
     public partial class InitialCreate : Migration

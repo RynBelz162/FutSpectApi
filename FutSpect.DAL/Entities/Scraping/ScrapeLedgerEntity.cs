@@ -1,9 +1,9 @@
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
-using FutSpect.DAL.Entities.Leagues;
-using FutSpect.DAL.Entities.Lookups;
+using FutSpect.Dal.Entities.Leagues;
+using FutSpect.Dal.Entities.Lookups;
 
-namespace FutSpect.DAL.Entities.Scraping;
+namespace FutSpect.Dal.Entities.Scraping;
 
 [Table("ScrapeLedger")]
 public class ScrapeLedgerEntity

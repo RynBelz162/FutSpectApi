@@ -1,12 +1,12 @@
-﻿using FutSpect.DAL.Entities.Clubs;
-using FutSpect.DAL.Entities.Leagues;
-using FutSpect.DAL.Entities.Lookups;
-using FutSpect.DAL.Entities.Players;
-using FutSpect.DAL.Entities.Scraping;
+﻿using FutSpect.Dal.Entities.Clubs;
+using FutSpect.Dal.Entities.Leagues;
+using FutSpect.Dal.Entities.Lookups;
+using FutSpect.Dal.Entities.Players;
+using FutSpect.Dal.Entities.Scraping;
 using Microsoft.EntityFrameworkCore;
 using Npgsql.EntityFrameworkCore.PostgreSQL.ValueGeneration;
 
-namespace FutSpect.DAL;
+namespace FutSpect.Dal;
 
 public class FutSpectContext : DbContext
 {

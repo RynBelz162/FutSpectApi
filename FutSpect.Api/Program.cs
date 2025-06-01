@@ -1,5 +1,5 @@
 using FutSpect.Api.Extensions;
-using FutSpect.DAL;
+using FutSpect.Dal;
 using Scalar.AspNetCore;
 using Serilog;
 

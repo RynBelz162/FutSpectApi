@@ -1,10 +1,10 @@
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
-using FutSpect.DAL.Entities.Leagues;
-using FutSpect.DAL.Interfaces;
+using FutSpect.Dal.Entities.Leagues;
+using FutSpect.Dal.Interfaces;
 using Microsoft.EntityFrameworkCore;
 
-namespace FutSpect.DAL.Entities.Clubs;
+namespace FutSpect.Dal.Entities.Clubs;
 
 public class LeagueLogoEntity : IRecordable
 {

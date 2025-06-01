@@ -8,7 +8,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "FutSpect.Api", "FutSpect.Ap
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FutSpect.Shared", "FutSpect.Shared\FutSpect.Shared.csproj", "{A6CFDEE7-2F27-4DD3-906B-065AC89023AE}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FutSpect.DAL", "FutSpect.DAL\FutSpect.DAL.csproj", "{9B0933FA-AEE9-4D39-A339-569338F3B2FA}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FutSpect.Dal", "FutSpect.Dal\FutSpect.Dal.csproj", "{9B0933FA-AEE9-4D39-A339-569338F3B2FA}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Tests", "Tests", "{0AB3BF05-4346-4AA6-1389-037BE0695223}"
 EndProject

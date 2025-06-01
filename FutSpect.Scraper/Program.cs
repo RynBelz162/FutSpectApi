@@ -1,4 +1,4 @@
-﻿using FutSpect.DAL;
+﻿using FutSpect.Dal;
 using FutSpect.Scraper.Extensions;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;

@@ -1,6 +1,6 @@
 using FutSpect.Shared.Models.Clubs;
 
-namespace FutSpect.DAL.Repositories.Clubs;
+namespace FutSpect.Dal.Repositories.Clubs;
 
 public interface IClubRepository
 {

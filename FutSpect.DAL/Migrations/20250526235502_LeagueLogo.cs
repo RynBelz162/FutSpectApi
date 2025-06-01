@@ -3,7 +3,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 #nullable disable
 
-namespace FutSpect.DAL.Migrations
+namespace FutSpect.Dal.Migrations
 {
     /// <inheritdoc />
     public partial class LeagueLogo : Migration

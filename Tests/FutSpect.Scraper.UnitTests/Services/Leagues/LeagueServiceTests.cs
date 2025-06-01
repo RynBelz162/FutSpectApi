@@ -1,4 +1,4 @@
-using FutSpect.DAL.Repositories.Leagues;
+using FutSpect.Dal.Repositories.Leagues;
 using FutSpect.Scraper.Models;
 using FutSpect.Scraper.Services.Leagues;
 using FutSpect.Shared.Models.Leagues;

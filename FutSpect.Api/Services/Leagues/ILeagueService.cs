@@ -1,4 +1,4 @@
-using FutSpect.DAL.Interfaces;
+using FutSpect.Dal.Interfaces;
 using FutSpect.Shared.Models;
 using FutSpect.Shared.Models.Leagues;
 

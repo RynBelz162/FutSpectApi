@@ -1,10 +1,10 @@
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
-using FutSpect.DAL.Entities.Lookups;
-using FutSpect.DAL.Interfaces;
+using FutSpect.Dal.Entities.Lookups;
+using FutSpect.Dal.Interfaces;
 using Microsoft.EntityFrameworkCore;
 
-namespace FutSpect.DAL.Entities.Leagues;
+namespace FutSpect.Dal.Entities.Leagues;
 
 [Index(nameof(Name), nameof(CountryId), IsUnique = true)]
 public class LeagueEntity : IRecordable

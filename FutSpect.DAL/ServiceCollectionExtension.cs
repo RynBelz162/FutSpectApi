@@ -1,10 +1,10 @@
-using FutSpect.DAL.Repositories.Clubs;
-using FutSpect.DAL.Repositories.Leagues;
-using FutSpect.DAL.Repositories.Scraping;
+using FutSpect.Dal.Repositories.Clubs;
+using FutSpect.Dal.Repositories.Leagues;
+using FutSpect.Dal.Repositories.Scraping;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 
-namespace FutSpect.DAL;
+namespace FutSpect.Dal;
 
 public static class ServiceCollectionExtension
 {

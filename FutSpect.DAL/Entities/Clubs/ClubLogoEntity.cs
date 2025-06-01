@@ -2,7 +2,7 @@ using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using Microsoft.EntityFrameworkCore;
 
-namespace FutSpect.DAL.Entities.Clubs;
+namespace FutSpect.Dal.Entities.Clubs;
 
 public class ClubLogoEntity
 {

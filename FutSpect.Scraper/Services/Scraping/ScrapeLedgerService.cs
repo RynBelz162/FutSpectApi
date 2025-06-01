@@ -1,5 +1,5 @@
-using FutSpect.DAL.Repositories.Leagues;
-using FutSpect.DAL.Repositories.Scraping;
+using FutSpect.Dal.Repositories.Leagues;
+using FutSpect.Dal.Repositories.Scraping;
 using FutSpect.Shared.Models.Scraping;
 
 namespace FutSpect.Scraper.Services.Scraping;

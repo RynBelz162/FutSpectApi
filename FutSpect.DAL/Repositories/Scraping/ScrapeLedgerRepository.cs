@@ -1,8 +1,8 @@
-using FutSpect.DAL.Entities.Scraping;
+using FutSpect.Dal.Entities.Scraping;
 using FutSpect.Shared.Models.Scraping;
 using Microsoft.EntityFrameworkCore;
 
-namespace FutSpect.DAL.Repositories.Scraping;
+namespace FutSpect.Dal.Repositories.Scraping;
 
 public class ScrapeLedgerRepository : IScrapeLedgerRepository
 {

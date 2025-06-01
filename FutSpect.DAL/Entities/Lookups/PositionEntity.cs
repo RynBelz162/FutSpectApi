@@ -3,7 +3,7 @@ using System.ComponentModel.DataAnnotations.Schema;
 using FutSpect.Shared.Constants;
 using Microsoft.EntityFrameworkCore;
 
-namespace FutSpect.DAL.Entities.Lookups;
+namespace FutSpect.Dal.Entities.Lookups;
 
 public class PositionEntity
 {

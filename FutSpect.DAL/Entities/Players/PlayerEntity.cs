@@ -1,9 +1,9 @@
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
-using FutSpect.DAL.Entities.Lookups;
+using FutSpect.Dal.Entities.Lookups;
 using Microsoft.EntityFrameworkCore;
 
-namespace FutSpect.DAL.Entities.Players;
+namespace FutSpect.Dal.Entities.Players;
 
 public class PlayerEntity
 {
