@@ -1,5 +1,6 @@
 using FutSpect.Api.Extensions;
 using FutSpect.Dal;
+using Microsoft.Extensions.FileProviders;
 using Scalar.AspNetCore;
 using Serilog;
 
@@ -42,6 +43,7 @@ if (app.Environment.IsDevelopment())
     app.MapScalarApiReference(opt =>
     {
         opt.Title = "FutSpect API";
+        opt.Favicon = "/favicon.ico";
         opt.Theme = ScalarTheme.BluePlanet;
     });
 }
@@ -50,6 +52,8 @@ app.MapGet("/", () => "Welcome to FutSpect API!")
     .ExcludeFromDescription();
 
 app.UseHttpsRedirection();
+
+app.ServeFavicon();
 
 app.MapControllers();
 
