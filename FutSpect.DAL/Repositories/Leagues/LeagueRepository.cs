@@ -33,7 +33,8 @@ public class LeagueRepository : ILeagueRepository
             PyramidLevel = league.PyramidLevel,
             HasProRel = league.HasProRel,
             Website = league.Website,
-            CreatedDate = DateTime.UtcNow
+            CreatedOn = DateTime.UtcNow,
+            ModifiedOn = DateTime.UtcNow
         };
 
         await _futSpectContext.Leagues.AddAsync(entity);
@@ -50,7 +51,8 @@ public class LeagueRepository : ILeagueRepository
             Bytes = logo.ImageBytes,
             SrcUrl = logo.ImageSrc,
             Extension = logo.FileExtension,
-            CreatedDate = DateTime.UtcNow
+            CreatedOn = DateTime.UtcNow,
+            ModifiedOn = DateTime.UtcNow
         };
 
         await _futSpectContext.LeagueLogos.AddAsync(entity);
@@ -74,5 +76,20 @@ public class LeagueRepository : ILeagueRepository
             .Skip(pageable.Skip)
             .Take(pageable.PageSize)
             .ToListAsync();
+    }
+
+    public async Task Update(League league)
+    {
+        await _futSpectContext.Leagues
+            .Where(x => x.Id == league.Id)
+            .ExecuteUpdateAsync(setters =>
+                setters
+                    .SetProperty(p => p.Name, league.Name)
+                    .SetProperty(p => p.HasProRel, league.HasProRel)
+                    .SetProperty(p => p.PyramidLevel, league.PyramidLevel)
+                    .SetProperty(p => p.Abbreviation, league.Abbreviation)
+                    .SetProperty(p => p.CountryId, league.CountryId)
+                    .SetProperty(p => p.ModifiedOn, DateTime.UtcNow)
+            );
     }
 }

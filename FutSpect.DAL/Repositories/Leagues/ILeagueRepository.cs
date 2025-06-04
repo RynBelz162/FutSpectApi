@@ -8,8 +8,10 @@ public interface ILeagueRepository
     Task<int> GetId(string name, int countryId);
 
     Task<int> Add(League league);
-    
+
     Task AddImage(LeagueLogo logo);
 
     Task<IEnumerable<League>> Get(IPageable pageable);
+
+    Task Update(League league);
 }

@@ -25,7 +25,9 @@ public class LeagueLogoEntity : IRecordable
     [MaxLength(25)]
     public required string Extension { get; init; }
 
-    public required DateTime CreatedDate { get; init; }
+    public required DateTime CreatedOn { get; init; }
+
+    public required DateTime ModifiedOn { get; init; }
 
     [ForeignKey(nameof(LeagueId))]
     public LeagueEntity? League { get; init; }

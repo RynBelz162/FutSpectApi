@@ -2,5 +2,6 @@ namespace FutSpect.Dal.Interfaces;
 
 public interface IRecordable
 {
-    public DateTime CreatedDate { get; }
+    public DateTime CreatedOn { get; }
+    public DateTime ModifiedOn { get; }
 }

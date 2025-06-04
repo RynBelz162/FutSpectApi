@@ -17,6 +17,7 @@ public class LeagueService : ILeagueService
     public async Task<Paged<League>> Get(IPageable pageable)
     {
         var results = await _leagueRepository.Get(pageable);
+
         return new Paged<League>
         {
             Items = results,

@@ -37,7 +37,9 @@ public class LeagueEntity : IRecordable
     [Required]
     public required int CountryId { get; init; }
 
-    public required DateTime CreatedDate { get; init; }
+    public required DateTime CreatedOn { get; init; }
+
+    public required DateTime ModifiedOn { get; init; }
 
     [ForeignKey(nameof(CountryId))]
     public CountryEntity Country { get; init; } = null!;
