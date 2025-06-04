@@ -23,6 +23,14 @@ public class LeagueRepository : ILeagueRepository
             .SingleAsync();
     }
 
+    public async Task<int?> SearchId(string name, int countryId)
+    {
+        return await _futSpectContext.Leagues
+            .Where(x => x.Name == name && x.CountryId == countryId)
+            .Select(x => x.Id)
+            .SingleOrDefaultAsync();
+    }
+
     public async Task<int> Add(League league)
     {
         var entity = new LeagueEntity
@@ -89,6 +97,19 @@ public class LeagueRepository : ILeagueRepository
                     .SetProperty(p => p.PyramidLevel, league.PyramidLevel)
                     .SetProperty(p => p.Abbreviation, league.Abbreviation)
                     .SetProperty(p => p.CountryId, league.CountryId)
+                    .SetProperty(p => p.ModifiedOn, DateTime.UtcNow)
+            );
+    }
+
+    public async Task UpdateImage(LeagueLogo logo)
+    {
+        await _futSpectContext.LeagueLogos
+            .Where(x => x.LeagueId == logo.LeagueId)
+            .ExecuteUpdateAsync(setters =>
+                setters
+                    .SetProperty(p => p.Bytes, logo.ImageBytes)
+                    .SetProperty(p => p.SrcUrl, logo.ImageSrc)
+                    .SetProperty(p => p.Extension, logo.FileExtension)
                     .SetProperty(p => p.ModifiedOn, DateTime.UtcNow)
             );
     }

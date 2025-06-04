@@ -18,7 +18,7 @@ public class LeagueServiceTests
     }
 
     [Fact]
-    public async Task Add_WhenGivenLeagueScrapeInfo_SavesLeagueInfoAndLogo()
+    public async Task Upsert_WhenGivenNewLeagueScrapeInfo_AddsNewLeagueInfoAndLogo()
     {
         LeagueScrapeInfo leagueScrapeInfo =
             new()
@@ -38,12 +38,52 @@ public class LeagueServiceTests
             };
 
         _leagueRepositoryMock
+            .Setup(x => x.SearchId(It.IsAny<string>(), It.IsAny<int>()))
+            .ReturnsAsync((int?)null);
+
+        _leagueRepositoryMock
             .Setup(x => x.Add(It.IsAny<League>()))
             .ReturnsAsync(1);
 
-        await _leagueService.Add(leagueScrapeInfo);
+        await _leagueService.Upsert(leagueScrapeInfo);
 
         _leagueRepositoryMock.Verify(x => x.Add(It.IsAny<League>()), Times.Once);
         _leagueRepositoryMock.Verify(x => x.AddImage(It.IsAny<LeagueLogo>()), Times.Once);
+
+        _leagueRepositoryMock.Verify(x => x.Update(It.IsAny<League>()), Times.Never);
+        _leagueRepositoryMock.Verify(x => x.UpdateImage(It.IsAny<LeagueLogo>()), Times.Never);
+    }
+
+    [Fact]
+    public async Task Upsert_WhenGivenExistingLeagueScrapeInfo_UpdateLeagueInfoAndLogo()
+    {
+        LeagueScrapeInfo leagueScrapeInfo =
+            new()
+            {
+                CountryId = 1,
+                Name = "Test Club 1",
+                Website = "https://club.com",
+                HasProRel = true,
+                PyramidLevel = 1,
+                Abbreviation = "TC1",
+                Image = new ScrapedImage
+                {
+                    ImageBytes = [],
+                    ImageSrcUrl = "https://club.com/image?=clubone",
+                    ImageExtension = ".png",
+                }
+            };
+
+        _leagueRepositoryMock
+            .Setup(x => x.SearchId(It.IsAny<string>(), It.IsAny<int>()))
+            .ReturnsAsync(1);
+
+        await _leagueService.Upsert(leagueScrapeInfo);
+
+        _leagueRepositoryMock.Verify(x => x.Update(It.IsAny<League>()), Times.Once);
+        _leagueRepositoryMock.Verify(x => x.UpdateImage(It.IsAny<LeagueLogo>()), Times.Once);
+
+        _leagueRepositoryMock.Verify(x => x.Add(It.IsAny<League>()), Times.Never);
+        _leagueRepositoryMock.Verify(x => x.AddImage(It.IsAny<LeagueLogo>()), Times.Never);
     }
 }

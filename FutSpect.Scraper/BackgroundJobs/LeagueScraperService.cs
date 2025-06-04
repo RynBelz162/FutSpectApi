@@ -83,7 +83,7 @@ public class LeagueScraperService : BackgroundService
                     continue;
                 }
 
-                await _leagueService.Add(league);
+                await _leagueService.Upsert(league);
                 await _scrapeLedgerService.Add(league.Name, league.CountryId, ScrapeTypes.LeagueInfo);
             }
             catch (Exception ex)
