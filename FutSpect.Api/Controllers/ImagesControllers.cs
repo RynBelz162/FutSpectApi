@@ -15,7 +15,7 @@ public class ImagesController : ControllerBase
     }
 
     [HttpGet("league/{id}")]
-    [EndpointSummary("Get league logo image")]
+    [EndpointSummary("Get League Logo")]
     [EndpointDescription("Returns the logo image for the specified league.")]
     [Tags("Images")]
     public async Task<IActionResult> GetLeagueLogo(Guid id)
@@ -30,7 +30,7 @@ public class ImagesController : ControllerBase
     }
 
     [HttpGet("club/{id}")]
-    [EndpointSummary("Get club logo image")]
+    [EndpointSummary("Get Club Logo")]
     [EndpointDescription("Returns the logo image for the specified club.")]
     [Tags("Images")]
     public async Task<IActionResult> GetClubLogo(Guid id)

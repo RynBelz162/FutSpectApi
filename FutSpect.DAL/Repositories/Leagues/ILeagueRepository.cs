@@ -7,7 +7,7 @@ public interface ILeagueRepository
 {
     Task<int> GetId(string name, int countryId);
 
-    Task<int?> SearchId(string name, int countryId);
+    Task<int> SearchId(string name, int countryId);
 
     Task<int> Add(League league);
 

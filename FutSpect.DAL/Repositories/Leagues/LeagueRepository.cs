@@ -22,7 +22,7 @@ public class LeagueRepository : ILeagueRepository
             .SingleAsync();
     }
 
-    public async Task<int?> SearchId(string name, int countryId)
+    public async Task<int> SearchId(string name, int countryId)
     {
         return await _futSpectContext.Leagues
             .Where(x => x.Name == name && x.CountryId == countryId)

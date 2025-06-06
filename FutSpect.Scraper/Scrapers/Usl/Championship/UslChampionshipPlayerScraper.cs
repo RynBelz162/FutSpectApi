@@ -1,9 +1,9 @@
 using FutSpect.Scraper.Models;
 using Microsoft.Playwright;
 
-namespace FutSpect.Scraper.Scrapers.Usl;
+namespace FutSpect.Scraper.Scrapers.Usl.Championship;
 
-public class UslPlayerScraper : IPlayerScraper
+public class UslChampionshipPlayerScraper : IPlayerScraper
 {
     // TODO: USL Player Scraper not currently working
     public Task<List<PlayerScrapeInfo>> Scrape(IBrowserContext browserContext, string rosterUrl)

@@ -22,13 +22,13 @@ public class LeagueService : ILeagueService
     public async Task Upsert(LeagueScrapeInfo leagueInfo)
     {
         var existingId = await _leagueRepository.SearchId(leagueInfo.Name, leagueInfo.CountryId);
-        if (existingId is null)
+        if (existingId == default)
         {
             await Add(leagueInfo);
             return;
         }
 
-        await Update(leagueInfo, existingId.Value);
+        await Update(leagueInfo, existingId);
     }
 
     private async Task Add(LeagueScrapeInfo leagueInfo)

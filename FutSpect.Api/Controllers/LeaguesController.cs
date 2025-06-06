@@ -18,7 +18,7 @@ public class LeaguesController : ControllerBase
     }
 
     [HttpGet]
-    [EndpointSummary("Retrieve all leagues")]
+    [EndpointSummary("Retrieve all Leagues")]
     [EndpointDescription("Returns a list of all leagues.")]
     [Tags("Leagues")]
     public async Task<ActionResult<Paged<League>>> GetLeagues([FromQuery] LeaguesRequest request)

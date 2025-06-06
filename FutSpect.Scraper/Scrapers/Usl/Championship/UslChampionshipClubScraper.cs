@@ -6,9 +6,9 @@ using FutSpect.Shared.Constants;
 using FutSpect.Shared.Models.Leagues;
 using Microsoft.Playwright;
 
-namespace FutSpect.Scraper.Scrapers.Usl;
+namespace FutSpect.Scraper.Scrapers.Usl.Championship;
 
-public partial class UslClubScraper : IClubScraper
+public partial class UslChampionshipClubScraper : IClubScraper
 {
     const string LeagueSiteUrl = "https://www.uslchampionship.com";
     const string TeamsUrl = $"{LeagueSiteUrl}/league-teams";
@@ -16,7 +16,7 @@ public partial class UslClubScraper : IClubScraper
     private readonly ILeagueService _leagueService;
     private readonly ISanitizeService _sanitizeService;
 
-    public UslClubScraper(ILeagueService leagueService, ISanitizeService sanitizeService)
+    public UslChampionshipClubScraper(ILeagueService leagueService, ISanitizeService sanitizeService)
     {
         _leagueService = leagueService;
         _sanitizeService = sanitizeService;

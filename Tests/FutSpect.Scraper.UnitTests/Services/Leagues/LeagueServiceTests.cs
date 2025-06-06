@@ -1,3 +1,4 @@
+using FutSpect.Dal.Repositories.Images;
 using FutSpect.Dal.Repositories.Leagues;
 using FutSpect.Scraper.Models;
 using FutSpect.Scraper.Services.Leagues;
@@ -9,12 +10,13 @@ namespace FutSpect.Scraper.UnitTests.Services.Leagues;
 public class LeagueServiceTests
 {
     private readonly Mock<ILeagueRepository> _leagueRepositoryMock;
+    private readonly Mock<IImageRepository> _imageRepositoryMock = new();
     private readonly LeagueService _leagueService;
 
     public LeagueServiceTests()
     {
         _leagueRepositoryMock = new Mock<ILeagueRepository>();
-        _leagueService = new LeagueService(_leagueRepositoryMock.Object);
+        _leagueService = new LeagueService(_leagueRepositoryMock.Object, _imageRepositoryMock.Object);
     }
 
     [Fact]
@@ -39,7 +41,7 @@ public class LeagueServiceTests
 
         _leagueRepositoryMock
             .Setup(x => x.SearchId(It.IsAny<string>(), It.IsAny<int>()))
-            .ReturnsAsync((int?)null);
+            .ReturnsAsync((int)default);
 
         _leagueRepositoryMock
             .Setup(x => x.Add(It.IsAny<League>()))
@@ -48,10 +50,10 @@ public class LeagueServiceTests
         await _leagueService.Upsert(leagueScrapeInfo);
 
         _leagueRepositoryMock.Verify(x => x.Add(It.IsAny<League>()), Times.Once);
-        _leagueRepositoryMock.Verify(x => x.AddImage(It.IsAny<LeagueLogo>()), Times.Once);
+        _imageRepositoryMock.Verify(x => x.AddLeagueLogo(It.IsAny<LeagueLogo>()), Times.Once);
 
         _leagueRepositoryMock.Verify(x => x.Update(It.IsAny<League>()), Times.Never);
-        _leagueRepositoryMock.Verify(x => x.UpdateImage(It.IsAny<LeagueLogo>()), Times.Never);
+        _imageRepositoryMock.Verify(x => x.UpdateLeagueLogo(It.IsAny<LeagueLogo>()), Times.Never);
     }
 
     [Fact]
@@ -81,9 +83,9 @@ public class LeagueServiceTests
         await _leagueService.Upsert(leagueScrapeInfo);
 
         _leagueRepositoryMock.Verify(x => x.Update(It.IsAny<League>()), Times.Once);
-        _leagueRepositoryMock.Verify(x => x.UpdateImage(It.IsAny<LeagueLogo>()), Times.Once);
+        _imageRepositoryMock.Verify(x => x.UpdateLeagueLogo(It.IsAny<LeagueLogo>()), Times.Once);
 
         _leagueRepositoryMock.Verify(x => x.Add(It.IsAny<League>()), Times.Never);
-        _leagueRepositoryMock.Verify(x => x.AddImage(It.IsAny<LeagueLogo>()), Times.Never);
+        _imageRepositoryMock.Verify(x => x.AddLeagueLogo(It.IsAny<LeagueLogo>()), Times.Never);
     }
 }
