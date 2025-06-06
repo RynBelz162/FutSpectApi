@@ -1,7 +1,9 @@
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using FutSpect.Dal.Entities.Clubs;
 using FutSpect.Dal.Entities.Lookups;
 using FutSpect.Dal.Interfaces;
+using FutSpect.Dal.Migrations;
 using Microsoft.EntityFrameworkCore;
 
 namespace FutSpect.Dal.Entities.Leagues;

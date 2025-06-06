@@ -1,4 +1,5 @@
 using FutSpect.Dal.Repositories.Clubs;
+using FutSpect.Dal.Repositories.Images;
 using FutSpect.Dal.Repositories.Leagues;
 using FutSpect.Dal.Repositories.Scraping;
 using Microsoft.EntityFrameworkCore;
@@ -18,6 +19,7 @@ public static class ServiceCollectionExtension
         serviceCollection.AddScoped<ILeagueRepository, LeagueRepository>();
         serviceCollection.AddScoped<IClubRepository, ClubRepository>();
         serviceCollection.AddScoped<IScrapeLedgerRepository, ScrapeLedgerRepository>();
+        serviceCollection.AddScoped<IImageRepository, ImageRepository>();
 
         return serviceCollection;
     }

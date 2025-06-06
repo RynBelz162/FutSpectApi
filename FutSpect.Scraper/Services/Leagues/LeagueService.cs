@@ -1,3 +1,4 @@
+using FutSpect.Dal.Repositories.Images;
 using FutSpect.Dal.Repositories.Leagues;
 using FutSpect.Scraper.Models;
 using FutSpect.Shared.Models.Leagues;
@@ -7,10 +8,12 @@ namespace FutSpect.Scraper.Services.Leagues;
 public class LeagueService : ILeagueService
 {
     private readonly ILeagueRepository _leagueRepository;
+    private readonly IImageRepository _imageRepository;
 
-    public LeagueService(ILeagueRepository leagueRepository)
+    public LeagueService(ILeagueRepository leagueRepository, IImageRepository imageRepository)
     {
         _leagueRepository = leagueRepository;
+        _imageRepository = imageRepository;
     }
 
     public Task<int> GetId(League league) =>
@@ -50,7 +53,7 @@ public class LeagueService : ILeagueService
             FileExtension = leagueInfo.Image.ImageExtension,
         };
 
-        await _leagueRepository.AddImage(logo);
+        await _imageRepository.AddLeagueLogo(logo);
     }
 
     private async Task Update(LeagueScrapeInfo leagueInfo, int existingId)
@@ -75,6 +78,6 @@ public class LeagueService : ILeagueService
         };
 
         await _leagueRepository.Update(league);
-        await _leagueRepository.UpdateImage(logo);
+        await _imageRepository.UpdateLeagueLogo(logo);
     }
 }

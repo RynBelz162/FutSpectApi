@@ -11,11 +11,7 @@ public interface ILeagueRepository
 
     Task<int> Add(League league);
 
-    Task AddImage(LeagueLogo logo);
-
     Task<IEnumerable<League>> Get(IPageable pageable);
 
     Task Update(League league);
-
-    Task UpdateImage(LeagueLogo logo);
 }

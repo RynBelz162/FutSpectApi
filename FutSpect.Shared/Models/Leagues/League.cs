@@ -10,4 +10,5 @@ public record League
     public required short PyramidLevel { get; init; }
     public string CountryName { get; init; } = string.Empty;
     public string Website { get; init; } = string.Empty;
+    public Guid? LogoId { get; init; }
 }

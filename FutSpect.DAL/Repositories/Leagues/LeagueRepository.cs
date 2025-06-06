@@ -1,4 +1,3 @@
-using FutSpect.Dal.Entities.Clubs;
 using FutSpect.Dal.Entities.Leagues;
 using FutSpect.Dal.Interfaces;
 using FutSpect.Shared.Models.Leagues;
@@ -51,36 +50,25 @@ public class LeagueRepository : ILeagueRepository
         return entity.Id;
     }
 
-    public async Task AddImage(LeagueLogo logo)
-    {
-        var entity = new LeagueLogoEntity
-        {
-            LeagueId = logo.LeagueId,
-            Bytes = logo.ImageBytes,
-            SrcUrl = logo.ImageSrc,
-            Extension = logo.FileExtension,
-            CreatedOn = DateTime.UtcNow,
-            ModifiedOn = DateTime.UtcNow
-        };
-
-        await _futSpectContext.LeagueLogos.AddAsync(entity);
-        await _futSpectContext.SaveChangesAsync();
-    }
-
     public async Task<IEnumerable<League>> Get(IPageable pageable)
     {
-        return await _futSpectContext.Leagues
-            .Select(l => new League
-            {
-                Id = l.Id,
-                Name = l.Name,
-                Abbreviation = l.Abbreviation,
-                CountryId = l.CountryId,
-                HasProRel = l.HasProRel,
-                PyramidLevel = l.PyramidLevel,
-                Website = l.Website
-            })
-            .OrderBy(l => l.Name)
+        var query = from league in _futSpectContext.Leagues
+                    join logo in _futSpectContext.LeagueLogos on league.Id equals logo.LeagueId into logos
+                    from image in logos.DefaultIfEmpty()
+                    orderby league.Name
+                    select new League
+                    {
+                        Id = league.Id,
+                        Name = league.Name,
+                        Abbreviation = league.Abbreviation,
+                        CountryId = league.CountryId,
+                        HasProRel = league.HasProRel,
+                        PyramidLevel = league.PyramidLevel,
+                        Website = league.Website,
+                        LogoId = image.Id,
+                    };
+
+        return await query
             .Skip(pageable.Skip)
             .Take(pageable.PageSize)
             .ToListAsync();
@@ -97,19 +85,6 @@ public class LeagueRepository : ILeagueRepository
                     .SetProperty(p => p.PyramidLevel, league.PyramidLevel)
                     .SetProperty(p => p.Abbreviation, league.Abbreviation)
                     .SetProperty(p => p.CountryId, league.CountryId)
-                    .SetProperty(p => p.ModifiedOn, DateTime.UtcNow)
-            );
-    }
-
-    public async Task UpdateImage(LeagueLogo logo)
-    {
-        await _futSpectContext.LeagueLogos
-            .Where(x => x.LeagueId == logo.LeagueId)
-            .ExecuteUpdateAsync(setters =>
-                setters
-                    .SetProperty(p => p.Bytes, logo.ImageBytes)
-                    .SetProperty(p => p.SrcUrl, logo.ImageSrc)
-                    .SetProperty(p => p.Extension, logo.FileExtension)
                     .SetProperty(p => p.ModifiedOn, DateTime.UtcNow)
             );
     }

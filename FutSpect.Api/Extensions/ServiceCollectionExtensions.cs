@@ -1,3 +1,4 @@
+using FutSpect.Api.Services.Images;
 using FutSpect.Api.Services.Leagues;
 
 namespace FutSpect.Api.Extensions;
@@ -8,6 +9,7 @@ public static class ServiceCollectionExtensions
     {
         // Register services
         services.AddScoped<ILeagueService, LeagueService>();
+        services.AddScoped<IImageService, ImageService>();
 
         return services;
     }
