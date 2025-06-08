@@ -14,15 +14,15 @@ public class LeagueService : ILeagueService
         _leagueRepository = leagueRepository;
     }
 
-    public async Task<Paged<League>> Get(IPageable pageable)
+    public async Task<Paged<League>> Get(ISearchable searchable)
     {
-        var results = await _leagueRepository.Get(pageable);
+        var results = await _leagueRepository.Get(searchable);
 
         return new Paged<League>
         {
             Items = results,
-            Page = pageable.Page,
-            PageSize = pageable.PageSize,
+            Page = searchable.Page,
+            PageSize = searchable.PageSize,
         };
     }
 }

@@ -11,7 +11,7 @@ public interface ILeagueRepository
 
     Task<int> Add(League league);
 
-    Task<IEnumerable<League>> Get(IPageable pageable);
+    Task<IEnumerable<League>> Get(ISearchable searchable);
 
     Task Update(League league);
 }

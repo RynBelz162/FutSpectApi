@@ -1,19 +1,16 @@
+using System.ComponentModel;
+
 namespace FutSpect.Shared.Models;
 
+[Description("Represents a paged collection of items.")]
 public class Paged<T>
 {
-    /// <summary>
-    /// The current page number.
-    /// </summary>
+    [Description("The current page number.")]
     public int Page { get; set; }
 
-    /// <summary>
-    /// The number of items per page.
-    /// </summary>
+    [Description("The number of items per page.")]
     public int PageSize { get; set; }
 
-    /// <summary>
-    /// The items on the current page.
-    /// </summary>
+    [Description("The items available on the given page.")]
     public IEnumerable<T> Items { get; set; } = [];
 }

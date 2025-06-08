@@ -6,5 +6,5 @@ namespace FutSpect.Api.Services.Leagues;
 
 public interface ILeagueService
 {
-    Task<Paged<League>> Get(IPageable pageable);
+    Task<Paged<League>> Get(ISearchable searchable);
 }

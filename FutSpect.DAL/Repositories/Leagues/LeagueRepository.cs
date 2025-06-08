@@ -50,18 +50,24 @@ public class LeagueRepository : ILeagueRepository
         return entity.Id;
     }
 
-    public async Task<IEnumerable<League>> Get(IPageable pageable)
+    public async Task<IEnumerable<League>> Get(ISearchable searchable)
     {
         var query = from league in _futSpectContext.Leagues
+                    join country in _futSpectContext.Countries on league.CountryId equals country.Id
                     join logo in _futSpectContext.LeagueLogos on league.Id equals logo.LeagueId into logos
                     from image in logos.DefaultIfEmpty()
+                    where string.IsNullOrEmpty(searchable.SearchTerm)
+                          || league.Name.Contains(searchable.SearchTerm)
+                          || country.Name.Contains(searchable.SearchTerm)
+                          || league.Abbreviation.Contains(searchable.SearchTerm)
+                          || country.Abbreviation.Contains(searchable.SearchTerm)
                     orderby league.Name
                     select new League
                     {
                         Id = league.Id,
                         Name = league.Name,
                         Abbreviation = league.Abbreviation,
-                        CountryId = league.CountryId,
+                        CountryName = country.Name,
                         HasProRel = league.HasProRel,
                         PyramidLevel = league.PyramidLevel,
                         Website = league.Website,
@@ -69,8 +75,8 @@ public class LeagueRepository : ILeagueRepository
                     };
 
         return await query
-            .Skip(pageable.Skip)
-            .Take(pageable.PageSize)
+            .Skip(searchable.Skip)
+            .Take(searchable.PageSize)
             .ToListAsync();
     }
 
