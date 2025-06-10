@@ -17,7 +17,7 @@ public class CountryEntity
     public required string Name { get; init; }
 
     [Required]
-    [MaxLength(2)]
+    [MaxLength(3)]
     public required string Abbreviation { get; init; }
 
     public static void SeedData(DbContext dbContext)
@@ -36,7 +36,28 @@ public class CountryEntity
                     {
                         Id = SharedConstants.Countries.USA,
                         Name = "United States of America",
-                        Abbreviation = "US"
+                        Abbreviation = "USA"
+                    }
+                );
+
+            dbContext.SaveChanges();
+        }
+
+        var england = dbContext
+            .Set<CountryEntity>()
+            .FirstOrDefault(x => x.Id == SharedConstants.Countries.England);
+
+        if (england is null)
+        {
+            dbContext
+                .Set<CountryEntity>()
+                .Add
+                (
+                    new CountryEntity
+                    {
+                        Id = SharedConstants.Countries.England,
+                        Name = "England",
+                        Abbreviation = "ENG"
                     }
                 );
 

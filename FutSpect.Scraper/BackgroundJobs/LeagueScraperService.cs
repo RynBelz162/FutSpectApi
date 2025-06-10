@@ -47,7 +47,10 @@ public class LeagueScraperService : BackgroundService
         if (_options.Value.ScraperArgs.RunLeagueNow)
         {
             _logger.LogInformation("League scrape timer bypass provided, running immediately.");
+
             await Scrape();
+
+            _logger.LogInformation("League scrape timer bypass completed.");
             return;
         }
 
