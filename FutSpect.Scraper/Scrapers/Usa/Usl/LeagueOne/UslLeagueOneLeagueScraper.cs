@@ -3,11 +3,13 @@ using FutSpect.Scraper.Services;
 using FutSpect.Shared.Constants;
 using Microsoft.Playwright;
 
-namespace FutSpect.Scraper.Scrapers.Usl.Championship;
+namespace FutSpect.Scraper.Scrapers.Usa.Usl.LeagueOne;
 
-public class UslLeagueScraper : ILeagueScraper
+public class UslLeagueOneLeagueScraper : ILeagueScraper
 {
-    private const string LeagueUrl = "https://www.uslchampionship.com/";
+    public string LeagueName => "USL League One";
+    public int CountryId => Countries.USA;
+    private const string LeagueUrl = "https://www.uslleagueone.com/";
 
     public async Task<LeagueScrapeInfo?> Scrape(IBrowserContext browserContext)
     {
@@ -31,12 +33,12 @@ public class UslLeagueScraper : ILeagueScraper
 
         var leagueScrapeInfo = new LeagueScrapeInfo
         {
-            Name = "USL Championship",
-            Abbreviation = "USLC",
+            Name = LeagueName,
+            Abbreviation = "USL1",
             HasProRel = false,
-            PyramidLevel = 2,
+            PyramidLevel = 3,
             Website = LeagueUrl,
-            CountryId = Countries.USA,
+            CountryId = CountryId,
             Image = new()
             {
                 ImageBytes = imageBytes,

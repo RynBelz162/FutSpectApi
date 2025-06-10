@@ -79,6 +79,12 @@ public class LeagueScraperService : BackgroundService
 
             try
             {
+                if (await HasBeenScrapedRecently(scraper.LeagueName, scraper.CountryId))
+                {
+                    _logger.LogInformation("League {LeagueName} has been scraped recently, skipping.", scraper.LeagueName);
+                    continue;
+                }   
+
                 var league = await scraper.Scrape(context);
                 if (league is null)
                 {
@@ -101,5 +107,12 @@ public class LeagueScraperService : BackgroundService
         }
 
         await browser.CloseAsync();
+    }
+
+
+    private async Task<bool> HasBeenScrapedRecently(string leagueName, int countryId)
+    {
+        var scrapeInterval = _timeProvider.GetUtcNow().AddHours(-1).UtcDateTime;
+        return await _scrapeLedgerService.Any(leagueName, countryId, ScrapeTypes.LeagueInfo, scrapeInterval);
     }
 }

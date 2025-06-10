@@ -4,7 +4,7 @@ using FutSpect.Scraper.Services;
 using FutSpect.Scraper.Services.Scraping;
 using Microsoft.Playwright;
 
-namespace FutSpect.Scraper.Scrapers.Mls;
+namespace FutSpect.Scraper.Scrapers.Usa.Mls;
 
 public class MlsPlayScraper : IPlayerScraper
 {

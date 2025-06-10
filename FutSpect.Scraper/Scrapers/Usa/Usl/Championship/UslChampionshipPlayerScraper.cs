@@ -1,7 +1,7 @@
 using FutSpect.Scraper.Models;
 using Microsoft.Playwright;
 
-namespace FutSpect.Scraper.Scrapers.Usl.Championship;
+namespace FutSpect.Scraper.Scrapers.Usa.Usl.Championship;
 
 public class UslChampionshipPlayerScraper : IPlayerScraper
 {

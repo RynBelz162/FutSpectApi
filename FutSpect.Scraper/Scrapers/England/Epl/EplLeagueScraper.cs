@@ -3,18 +3,20 @@ using FutSpect.Scraper.Services;
 using FutSpect.Shared.Constants;
 using Microsoft.Playwright;
 
-namespace FutSpect.Scraper.Scrapers.Mls;
+namespace FutSpect.Scraper.Scrapers.England.Epl;
 
-public class MlsLeagueScraper : ILeagueScraper
+public class EplLeagueScraper : ILeagueScraper
 {
-    private const string LeagueUrl = "https://www.mlssoccer.com/";
+    public string LeagueName => "English Premier League";
+    public int CountryId => Countries.England;
+    private const string LeagueUrl = "https://www.premierleague.com/";
 
     public async Task<LeagueScrapeInfo?> Scrape(IBrowserContext browserContext)
     {
         var page = await browserContext.NewPageAsync();
         await page.GotoAsync(LeagueUrl);
 
-        var imageElement = page.Locator(".mls-c-header__club-logo").Locator("img");
+        var imageElement = page.Locator(".pl-header-logo");
         var imageSrc = await imageElement.GetAttributeAsync("src");
 
         if (imageSrc is null)
@@ -24,15 +26,14 @@ public class MlsLeagueScraper : ILeagueScraper
 
         var (imageBytes, imageExtension) = await ImageDownloaderService.DownloadImageAsync(imageSrc);
 
-
         var leagueScrapeInfo = new LeagueScrapeInfo
         {
-            Name = "Major League Soccer",
-            Abbreviation = "MLS",
-            HasProRel = false,
+            Name = LeagueName,
+            Abbreviation = "EPL",
+            HasProRel = true,
             PyramidLevel = 1,
             Website = LeagueUrl,
-            CountryId = Countries.USA,
+            CountryId = CountryId,
             Image = new()
             {
                 ImageBytes = imageBytes,

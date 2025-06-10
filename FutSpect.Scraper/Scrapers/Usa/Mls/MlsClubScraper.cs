@@ -6,7 +6,7 @@ using FutSpect.Shared.Extensions;
 using FutSpect.Shared.Models.Leagues;
 using Microsoft.Playwright;
 
-namespace FutSpect.Scraper.Scrapers.Mls;
+namespace FutSpect.Scraper.Scrapers.Usa.Mls;
 
 public partial class MlsClubScraper : IClubScraper
 {

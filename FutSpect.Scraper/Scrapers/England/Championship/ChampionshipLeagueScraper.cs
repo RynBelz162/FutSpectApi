@@ -3,18 +3,26 @@ using FutSpect.Scraper.Services;
 using FutSpect.Shared.Constants;
 using Microsoft.Playwright;
 
-namespace FutSpect.Scraper.Scrapers.Epl;
+namespace FutSpect.Scraper.Scrapers.England.Championship;
 
-public class EplLeagueScraper : ILeagueScraper
+public class ChampionshipLeagueScraper : ILeagueScraper
 {
-    private const string LeagueUrl = "https://www.premierleague.com/";
+    public string LeagueName => "EFL Championship";
+    public int CountryId => Countries.England;
+    private const string LeagueUrl = "https://www.efl.com/competitions/efl-championship/";
+
+    private static string GetBaseUrl()
+    {
+        Uri uri = new(LeagueUrl);
+        return $"{uri.Scheme}://{uri.Host}";
+    }
 
     public async Task<LeagueScrapeInfo?> Scrape(IBrowserContext browserContext)
     {
         var page = await browserContext.NewPageAsync();
         await page.GotoAsync(LeagueUrl);
 
-        var imageElement = page.Locator(".pl-header-logo");
+        var imageElement = page.Locator(".footer-logo");
         var imageSrc = await imageElement.GetAttributeAsync("src");
 
         if (imageSrc is null)
@@ -22,16 +30,22 @@ public class EplLeagueScraper : ILeagueScraper
             return null;
         }
 
+        if (imageSrc.StartsWith('/'))
+        {
+            // Handle protocol-relative URLs
+            imageSrc = GetBaseUrl() + imageSrc;
+        }
+
         var (imageBytes, imageExtension) = await ImageDownloaderService.DownloadImageAsync(imageSrc);
 
         var leagueScrapeInfo = new LeagueScrapeInfo
         {
-            Name = "English Premier League",
-            Abbreviation = "EPL",
+            Name = LeagueName,
+            Abbreviation = "EFLC",
             HasProRel = true,
-            PyramidLevel = 1,
+            PyramidLevel = 2,
             Website = LeagueUrl,
-            CountryId = Countries.England,
+            CountryId = CountryId,
             Image = new()
             {
                 ImageBytes = imageBytes,
