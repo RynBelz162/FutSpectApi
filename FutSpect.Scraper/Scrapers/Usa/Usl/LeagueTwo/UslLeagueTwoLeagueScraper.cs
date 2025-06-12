@@ -1,5 +1,5 @@
 using FutSpect.Scraper.Models;
-using FutSpect.Scraper.Services;
+using FutSpect.Scraper.Services.Image;
 using FutSpect.Shared.Constants;
 using Microsoft.Playwright;
 
@@ -10,6 +10,13 @@ public class UslLeagueTwoLeagueScraper : ILeagueScraper
     public string LeagueName => "USL League Two";
     public int CountryId => Countries.USA;
     private const string LeagueUrl = "https://www.uslleaguetwo.com/";
+    
+    private readonly IImageService _imageService;
+
+    public UslLeagueTwoLeagueScraper(IImageService imageService)
+    {
+        _imageService = imageService;
+    }
 
     public async Task<LeagueScrapeInfo?> Scrape(IBrowserContext browserContext)
     {
@@ -29,7 +36,11 @@ public class UslLeagueTwoLeagueScraper : ILeagueScraper
             return null;
         }
 
-        var (imageBytes, imageExtension) = await ImageDownloaderService.DownloadImageAsync(imageSrc);
+        var imageResult = await _imageService.DownloadImageAsync(LeagueUrl, imageSrc);
+        if (!imageResult.IsSuccess)
+        {
+            return null;
+        }
 
         var leagueScrapeInfo = new LeagueScrapeInfo
         {
@@ -39,12 +50,7 @@ public class UslLeagueTwoLeagueScraper : ILeagueScraper
             PyramidLevel = 4,
             Website = LeagueUrl,
             CountryId = CountryId,
-            Image = new()
-            {
-                ImageBytes = imageBytes,
-                ImageExtension = imageExtension,
-                ImageSrcUrl = imageSrc
-            }
+            Image = imageResult.Value
         };
 
         await page.CloseAsync();

@@ -4,6 +4,7 @@ using FutSpect.Scraper.Helpers;
 using FutSpect.Scraper.Options;
 using FutSpect.Scraper.Scrapers;
 using FutSpect.Scraper.Services.Clubs;
+using FutSpect.Scraper.Services.Image;
 using FutSpect.Scraper.Services.Leagues;
 using FutSpect.Scraper.Services.Scraping;
 using Microsoft.Extensions.Configuration;
@@ -15,6 +16,7 @@ public static class ServiceCollectionExtensions
 {
     public static IServiceCollection AddServices(this IServiceCollection serviceCollection)
     {
+        serviceCollection.AddSingleton<IImageService, ImageService>();
         serviceCollection.AddSingleton<IPlayerInfoParseService, PlayerInfoParseService>();
         serviceCollection.AddSingleton<ISanitizeService, SanitizeService>();
         serviceCollection.AddSingleton<IScrapeLedgerService, ScrapeLedgerService>();

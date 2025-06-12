@@ -1,6 +1,6 @@
 using FutSpect.Scraper.Constants;
 using FutSpect.Scraper.Models;
-using FutSpect.Scraper.Services;
+using FutSpect.Scraper.Services.Image;
 using FutSpect.Scraper.Services.Scraping;
 using Microsoft.Playwright;
 
@@ -12,11 +12,13 @@ public class MlsPlayScraper : IPlayerScraper
 
     private readonly IPlayerInfoParseService _playerInfoParseService;
     private readonly ISanitizeService _sanitizeService;
+    private readonly IImageService _imageService;
 
-    public MlsPlayScraper(IPlayerInfoParseService playerInfoParseService, ISanitizeService sanitizeService)
+    public MlsPlayScraper(IPlayerInfoParseService playerInfoParseService, ISanitizeService sanitizeService, IImageService imageService)
     {
         _playerInfoParseService = playerInfoParseService;
         _sanitizeService = sanitizeService;
+        _imageService = imageService;
     }
 
     public async Task<List<PlayerScrapeInfo>> Scrape(IBrowserContext browserContext, string rosterUrl)
@@ -67,12 +69,15 @@ public class MlsPlayScraper : IPlayerScraper
         var imageElement = page.Locator(".mls-o-masthead__branded-image > picture > img");
         var imageSrc = await imageElement.GetAttributeAsync("src");
 
-        string imageExtension = string.Empty;
-        byte[] imageBytes = [];
-
-        if (imageSrc is not null)
+        if (imageSrc is null)
         {
-            (imageBytes, imageExtension) = await ImageDownloaderService.DownloadImageAsync(imageSrc);
+            return null;
+        }
+
+        var imageResult = await _imageService.DownloadImageAsync(PlayerSiteUrl, imageSrc);
+        if (!imageResult.IsSuccess)
+        {
+            return null;
         }
 
         string? firstName = null;
@@ -110,12 +115,7 @@ public class MlsPlayScraper : IPlayerScraper
             PositionId = positionId,
             Number = number,
             Birthplace = birthPlace,
-            Image = new()
-            {
-                ImageBytes = imageBytes,
-                ImageExtension = imageExtension,
-                ImageSrcUrl = imageSrc ?? string.Empty
-            }
+            Image = imageResult.Value
         };
     }
 }

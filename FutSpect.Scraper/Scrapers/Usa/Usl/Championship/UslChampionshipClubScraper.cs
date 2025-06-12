@@ -1,5 +1,5 @@
 using FutSpect.Scraper.Models;
-using FutSpect.Scraper.Services;
+using FutSpect.Scraper.Services.Image;
 using FutSpect.Scraper.Services.Leagues;
 using FutSpect.Scraper.Services.Scraping;
 using FutSpect.Shared.Constants;
@@ -15,11 +15,13 @@ public partial class UslChampionshipClubScraper : IClubScraper
 
     private readonly ILeagueService _leagueService;
     private readonly ISanitizeService _sanitizeService;
+    private readonly IImageService _imageService;
 
-    public UslChampionshipClubScraper(ILeagueService leagueService, ISanitizeService sanitizeService)
+    public UslChampionshipClubScraper(ILeagueService leagueService, ISanitizeService sanitizeService, IImageService imageService)
     {
         _leagueService = leagueService;
         _sanitizeService = sanitizeService;
+        _imageService = imageService;
     }
 
     public League League => new()
@@ -94,7 +96,11 @@ public partial class UslChampionshipClubScraper : IClubScraper
             return null;
         }
 
-        var (imageBytes, imageExtension) = await ImageDownloaderService.DownloadImageAsync(imageSrc);
+        var imageResult = await _imageService.DownloadImageAsync(LeagueSiteUrl, imageSrc);
+        if (!imageResult.IsSuccess)
+        {
+            return null;
+        }
 
         await page.CloseAsync();
 
@@ -102,12 +108,7 @@ public partial class UslChampionshipClubScraper : IClubScraper
         {
             Name = _sanitizeService.ToTitleCase(name),
             LeagueId = leagueId,
-            Image = new()
-            {
-                ImageSrcUrl = imageSrc,
-                ImageBytes = imageBytes,
-                ImageExtension = imageExtension,
-            },
+            Image = imageResult.Value,
             RosterUrl = $"{LeagueSiteUrl}{rosterUrl}",
             ScheduleUrl = $"{LeagueSiteUrl}{scheduleUrl}"
         };

@@ -1,5 +1,5 @@
 using FutSpect.Scraper.Models;
-using FutSpect.Scraper.Services;
+using FutSpect.Scraper.Services.Image;
 using FutSpect.Shared.Constants;
 using Microsoft.Playwright;
 
@@ -11,10 +11,11 @@ public class ChampionshipLeagueScraper : ILeagueScraper
     public int CountryId => Countries.England;
     private const string LeagueUrl = "https://www.efl.com/competitions/efl-championship/";
 
-    private static string GetBaseUrl()
+    private readonly IImageService _imageService;
+
+    public ChampionshipLeagueScraper(IImageService imageService)
     {
-        Uri uri = new(LeagueUrl);
-        return $"{uri.Scheme}://{uri.Host}";
+        _imageService = imageService;
     }
 
     public async Task<LeagueScrapeInfo?> Scrape(IBrowserContext browserContext)
@@ -25,18 +26,11 @@ public class ChampionshipLeagueScraper : ILeagueScraper
         var imageElement = page.Locator(".footer-logo");
         var imageSrc = await imageElement.GetAttributeAsync("src");
 
-        if (imageSrc is null)
+        var imageResult = await _imageService.DownloadImageAsync(LeagueUrl, imageSrc);
+        if (!imageResult.IsSuccess)
         {
             return null;
         }
-
-        if (imageSrc.StartsWith('/'))
-        {
-            // Handle protocol-relative URLs
-            imageSrc = GetBaseUrl() + imageSrc;
-        }
-
-        var (imageBytes, imageExtension) = await ImageDownloaderService.DownloadImageAsync(imageSrc);
 
         var leagueScrapeInfo = new LeagueScrapeInfo
         {
@@ -46,12 +40,7 @@ public class ChampionshipLeagueScraper : ILeagueScraper
             PyramidLevel = 2,
             Website = LeagueUrl,
             CountryId = CountryId,
-            Image = new()
-            {
-                ImageBytes = imageBytes,
-                ImageExtension = imageExtension,
-                ImageSrcUrl = imageSrc
-            }
+            Image = imageResult.Value
         };
 
         await page.CloseAsync();

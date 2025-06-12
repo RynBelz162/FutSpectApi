@@ -1,5 +1,5 @@
 using FutSpect.Scraper.Models;
-using FutSpect.Scraper.Services;
+using FutSpect.Scraper.Services.Image;
 using FutSpect.Scraper.Services.Leagues;
 using FutSpect.Shared.Constants;
 using FutSpect.Shared.Extensions;
@@ -13,10 +13,12 @@ public partial class MlsClubScraper : IClubScraper
     const string LeagueSiteUrl = "https://mlssoccer.com";
 
     private readonly ILeagueService _leagueService;
+    private readonly IImageService _imageService;
 
-    public MlsClubScraper(ILeagueService leagueService)
+    public MlsClubScraper(ILeagueService leagueService, IImageService imageService)
     {
         _leagueService = leagueService;
+        _imageService = imageService;
     }
 
     public League League => new()
@@ -44,7 +46,7 @@ public partial class MlsClubScraper : IClubScraper
         return [.. results.WhereNotNull()];
     }
 
-    private static async Task<ClubScrapeInfo?> ScrapeClub(ILocator locator, int leagueId)
+    private async Task<ClubScrapeInfo?> ScrapeClub(ILocator locator, int leagueId)
     {
         var clubLogo = locator.Locator(".mls-o-clubs-hub-clubs-list__club-logo");
 
@@ -57,7 +59,11 @@ public partial class MlsClubScraper : IClubScraper
             return null;
         }
 
-        var (imageBytes, imageExtension) = await ImageDownloaderService.DownloadImageAsync(imageSrc);
+        var imageResult = await _imageService.DownloadImageAsync(LeagueSiteUrl, imageSrc);
+        if (!imageResult.IsSuccess)
+        {
+            return null;
+        }
 
         var links = locator.Locator(".mls-o-clubs-hub-clubs-list__club-info")
             .Locator(".mls-o-clubs-hub-clubs-list__club-links");
@@ -69,12 +75,7 @@ public partial class MlsClubScraper : IClubScraper
         {
             Name = name,
             LeagueId = leagueId,
-            Image = new()
-            {
-                ImageSrcUrl = imageSrc,
-                ImageBytes = imageBytes,
-                ImageExtension = imageExtension,
-            },
+            Image = imageResult.Value,
             RosterUrl = $"{LeagueSiteUrl}{detailsHref}roster",
             ScheduleUrl = $"{LeagueSiteUrl}{scheduleHref}"
         };

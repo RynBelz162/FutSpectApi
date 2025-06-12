@@ -10,6 +10,7 @@ var builder = Host.CreateApplicationBuilder(args);
 
 Log.Logger = new LoggerConfiguration()
     .WriteTo.Console()
+    .MinimumLevel.Override("Microsoft.EntityFrameworkCore.Database.Command", Serilog.Events.LogEventLevel.Warning)
     .CreateLogger();
 
 builder.Logging
@@ -23,6 +24,7 @@ var connectionString = builder.Configuration.GetConnectionString("FutSpect")
     ?? throw new InvalidOperationException("Connection string 'FutSpect' not found.");
 
 builder.Services
+    .AddHttpClient()
     .AddConfigOptions(builder.Configuration, args)
     .AddSingleton(TimeProvider.System)
     .AddDatabase(connectionString)

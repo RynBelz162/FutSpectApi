@@ -21,13 +21,21 @@ public record Result
         };
 }
 
-public record Result<T>
+public record Result<T> where T : notnull
 {
-    [MemberNotNullWhen(returnValue: true, nameof(IsSuccess))]
     public T? Value { get; init; }
 
+    [MemberNotNullWhen(true, nameof(Value))]
     public bool IsSuccess { get; init; }
+
     public string Message { get; init; } = string.Empty;
+
+    public static Result<T> Ok(T value) =>
+        new()
+        {
+            IsSuccess = true,
+            Value = value
+        };
 
     public static Result<T> Fail(string message) =>
         new()
@@ -35,12 +43,5 @@ public record Result<T>
             IsSuccess = false,
             Message = message,
             Value = default
-        };
-
-    public static Result<T> Ok(T value) =>
-        new()
-        {
-            IsSuccess = true,
-            Value = value
         };
 }

@@ -112,7 +112,7 @@ public class LeagueScraperService : BackgroundService
 
     private async Task<bool> HasBeenScrapedRecently(string leagueName, int countryId)
     {
-        var scrapeInterval = _timeProvider.GetUtcNow().AddHours(-1).UtcDateTime;
+        var scrapeInterval = _timeProvider.GetUtcNow().AddMinutes(-5).UtcDateTime;
         return await _scrapeLedgerService.Any(leagueName, countryId, ScrapeTypes.LeagueInfo, scrapeInterval);
     }
 }

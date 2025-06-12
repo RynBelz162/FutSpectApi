@@ -1,5 +1,5 @@
 using FutSpect.Scraper.Models;
-using FutSpect.Scraper.Services;
+using FutSpect.Scraper.Services.Image;
 using FutSpect.Shared.Constants;
 using Microsoft.Playwright;
 
@@ -11,6 +11,12 @@ public class EplLeagueScraper : ILeagueScraper
     public int CountryId => Countries.England;
     private const string LeagueUrl = "https://www.premierleague.com/";
 
+    private readonly IImageService _imageService;
+    public EplLeagueScraper(IImageService imageService)
+    {
+        _imageService = imageService;
+    }
+
     public async Task<LeagueScrapeInfo?> Scrape(IBrowserContext browserContext)
     {
         var page = await browserContext.NewPageAsync();
@@ -19,12 +25,12 @@ public class EplLeagueScraper : ILeagueScraper
         var imageElement = page.Locator(".pl-header-logo");
         var imageSrc = await imageElement.GetAttributeAsync("src");
 
-        if (imageSrc is null)
+        var imageResult = await _imageService.DownloadImageAsync(LeagueUrl, imageSrc);
+
+        if (!imageResult.IsSuccess)
         {
             return null;
         }
-
-        var (imageBytes, imageExtension) = await ImageDownloaderService.DownloadImageAsync(imageSrc);
 
         var leagueScrapeInfo = new LeagueScrapeInfo
         {
@@ -34,12 +40,7 @@ public class EplLeagueScraper : ILeagueScraper
             PyramidLevel = 1,
             Website = LeagueUrl,
             CountryId = CountryId,
-            Image = new()
-            {
-                ImageBytes = imageBytes,
-                ImageExtension = imageExtension,
-                ImageSrcUrl = imageSrc
-            }
+            Image = imageResult.Value
         };
 
         await page.CloseAsync();
